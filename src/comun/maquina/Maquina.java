@@ -14,8 +14,8 @@ public class Maquina {
     private String placeMadre;//deberia ser una clase?
     private Bios bios;
     private SistemaOperativo sistemaOperativo;
-    private DiscoDuro discoDuro;
-    private MemoriaRam memoriaRam;
+    private DiscoDuro discoDuro;//podria ser un array
+    private MemoriaRam memoriaRam;//podria ser un array (de bancos de memoria)
     private Procesador procesador;
 
     public String getNombre() {

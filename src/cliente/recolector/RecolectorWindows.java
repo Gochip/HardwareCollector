@@ -29,7 +29,35 @@ public class RecolectorWindows extends Recolector {
 
     @Override
     public DiscoDuro getDiscoDuro() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DiscoDuro disco = new DiscoDuro();
+        try {
+            String[] linasComando = obtenerLineasComando("diskdrive", "manufacturer,model,size,interfacetype,partitions");//faltan firmware y nro de serie
+            if (linasComando != null) {
+                String cadenaAtributos = linasComando[0], cadenaValores = linasComando[1];
+                if (!cadenaAtributos.isEmpty() && !cadenaValores.isEmpty()) {
+                    String[] atributos = cadenaAtributos.split(",");
+                    String[] valores = cadenaValores.split(",");
+                    for (int i = 0; i < atributos.length; i++) {
+                        String atributo = atributos[i];
+                        if (atributo.equalsIgnoreCase("manufacturer")) {
+                            disco.setFabricante(valores[i]);
+                        } else if (atributo.equalsIgnoreCase("model")) {
+                            disco.setModelo(valores[i]);
+                        } else if (atributo.equalsIgnoreCase("size")) {
+                            disco.setCapacidad(Double.parseDouble(valores[i]));
+                        } else if (atributo.equalsIgnoreCase("interfacetype")) {
+                            disco.setTipoInterfaz(valores[i]);
+                        } else if (atributo.equalsIgnoreCase("partitions")) {
+                            disco.setCantidadParticiones(Integer.parseInt(valores[i]));
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(RecolectorWindows.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return disco;
     }
 
     @Override
@@ -102,6 +130,7 @@ public class RecolectorWindows extends Recolector {
 
     private String[] obtenerLineasComando(String elemento, String cadenaAtributosComando) throws IOException {
         String comando = "wmic " + elemento + " get " + cadenaAtributosComando + " /format:csv";
+        System.out.println(comando);
         Process proceso = Runtime.getRuntime().exec(comando);
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proceso.getInputStream()));
         String cadenaAtributos = "", cadenaValores = "";
