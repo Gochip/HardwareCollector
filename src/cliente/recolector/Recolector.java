@@ -15,7 +15,7 @@ public abstract class Recolector {
 
     public abstract DiscoDuro getDiscoDuro();
 
-    public abstract MemoriaRam getMemoriaRam();
+    public abstract MemoriaRam[] getMemoriasRam();
 
     public abstract Procesador getProcesador();
 
