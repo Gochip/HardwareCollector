@@ -1,0 +1,73 @@
+DROP DATABASE IF EXISTS hc_bd;
+CREATE DATABASE hc_bd;
+USE hc_bd;
+
+CREATE TABLE IF NOT EXISTS sistemas_operativos(
+	id INT NOT NULL AUTO_INCREMENT,
+	nombre VARCHAR(255),
+	version VARCHAR(50),
+	PRIMARY KEY(id)
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE IF NOT EXISTS maquinas(
+	id VARCHAR(255) NOT NULL,
+	id_sistema_operativo INT NOT NULL,
+	nombre VARCHAR(255) NULL,
+	fecha_alta DATETIME NOT NULL,
+	fecha_sincronizacion DATETIME NULL, /* fecha_ultimo_contacto */
+	PRIMARY KEY(id),
+	FOREIGN KEY (id_sistema_operativo) REFERENCES sistemas_operativos (id)
+		ON DELETE RESTRICT
+		ON UPDATE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE IF NOT EXISTS procesadores(
+	id INT NOT NULL AUTO_INCREMENT,
+	id_maquina VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NULL,
+	velocidad VARCHAR(255) NULL,
+	nucleos VARCHAR(255) NULL,
+	PRIMARY KEY(id,id_maquina),
+	FOREIGN KEY (id_maquina) REFERENCES maquinas (id)
+		ON DELETE RESTRICT
+		ON UPDATE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE IF NOT EXISTS memorias(
+	id INT NOT NULL AUTO_INCREMENT,
+	id_maquina VARCHAR(255) NOT NULL,
+	capacidad VARCHAR(255) NULL,
+	tipo VARCHAR(255) NULL,
+	descripcion VARCHAR(255) NULL,
+	numero_serial VARCHAR(255) NULL,
+	numero_ranura VARCHAR(255) NULL,
+	velocidad VARCHAR(255) NULL,
+	nombre VARCHAR(255) NULL,
+	PRIMARY KEY(id,id_maquina),
+	FOREIGN KEY (id_maquina) REFERENCES maquinas (id)
+		ON DELETE RESTRICT
+		ON UPDATE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE IF NOT EXISTS discos(
+	id INT NOT NULL AUTO_INCREMENT,
+	id_maquina VARCHAR(255) NOT NULL,
+	nombre VARCHAR(255) NULL,
+	fabricante VARCHAR(255) NULL,
+	modelo VARCHAR(255) NULL,
+	descripcion VARCHAR(255) NULL,
+	tipo VARCHAR(255) NULL,
+	tamanio VARCHAR(255) NULL,
+	numero_serial VARCHAR(255) NULL,
+	firmware VARCHAR(255) NULL,
+	cache VARCHAR(255) NULL,
+	arquitectura VARCHAR(255) NULL,
+	procesadores_fisicos VARCHAR(255) NULL,
+	procesadores_logicos VARCHAR(255) NULL,
+	PRIMARY KEY(id,id_maquina),
+	FOREIGN KEY (id_maquina) REFERENCES maquinas (id)
+		ON DELETE RESTRICT
+		ON UPDATE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+INSERT INTO sistemas_operativos VALUES (1,'Windows','Seven');

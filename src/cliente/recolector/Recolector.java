@@ -2,6 +2,7 @@ package cliente.recolector;
 
 import comun.maquina.*;
 import comun.componente.*;
+import java.util.List;
 
 /**
  *
@@ -15,7 +16,7 @@ public abstract class Recolector {
 
     public abstract DiscoDuro getDiscoDuro();
 
-    public abstract MemoriaRam[] getMemoriasRam();
+    public abstract List<MemoriaRam> getMemoriasRam();
 
     public abstract Procesador getProcesador();
 

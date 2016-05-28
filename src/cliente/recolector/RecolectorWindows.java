@@ -21,7 +21,11 @@ public class RecolectorWindows extends Recolector {
 
     @Override
     public Maquina getMaquina() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Maquina maquina = new Maquina();
+        maquina.setDiscoDuro(getDiscoDuro());
+        maquina.setMemoriasRam(getMemoriasRam());
+        maquina.setDiscoDuro(getDiscoDuro());
+        return maquina;
     }
 
     @Override
@@ -63,14 +67,15 @@ public class RecolectorWindows extends Recolector {
     }
 
     @Override
-    public MemoriaRam[] getMemoriasRam() {
-        MemoriaRam[] memoriasRam = null;
+    public List<MemoriaRam> getMemoriasRam() {
+        List<MemoriaRam> memoriasRam = null;
         try {
             String[] lineasComando = obtenerMuchasLineasComando("memorychip", "banklabel,capacity,speed,datawidth,manufacturer,serialnumber");
             if (lineasComando != null) {
                 String cadenaAtributos = lineasComando[0];
                 String[] cadenasValores = new String[lineasComando.length - 1];
-                memoriasRam = new MemoriaRam[lineasComando.length - 1];
+                memoriasRam = new ArrayList<MemoriaRam>();
+                //memoriasRam = new MemoriaRam[lineasComando.length - 1];
                 for (int i = 0; i < cadenasValores.length; i++) {
                     cadenasValores[i] = lineasComando[i + 1];
                     String cadenaValores = cadenasValores[i];
@@ -97,7 +102,8 @@ public class RecolectorWindows extends Recolector {
                             }
                         }
                     }
-                    memoriasRam[i] = bancoMemoria;
+                    //memoriasRam[i] = bancoMemoria;
+                    memoriasRam.add(bancoMemoria);
                 }
             }
         } catch (IOException ex) {

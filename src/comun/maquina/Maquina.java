@@ -1,6 +1,7 @@
 package comun.maquina;
 
 import comun.componente.*;
+import java.util.List;
 
 /**
  *
@@ -15,7 +16,7 @@ public class Maquina {
     private Bios bios;
     private SistemaOperativo sistemaOperativo;
     private DiscoDuro discoDuro;//podria ser un array
-    private MemoriaRam memoriaRam;//podria ser un array (de bancos de memoria)
+    private List<MemoriaRam> memoriasRam;
     private Procesador procesador;
 
     public String getNombre() {
@@ -66,12 +67,24 @@ public class Maquina {
         this.discoDuro = discoDuro;
     }
 
-    public MemoriaRam getMemoriaRam() {
-        return memoriaRam;
+    public void agregarMemoriasRam(MemoriaRam memoriaRam) {
+        this.memoriasRam.add(memoriaRam);
     }
 
-    public void setMemoriaRam(MemoriaRam memoriaRam) {
-        this.memoriaRam = memoriaRam;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<MemoriaRam> getMemoriasRam() {
+        return memoriasRam;
+    }
+
+    public void setMemoriasRam(List<MemoriaRam> memoriasRam) {
+        this.memoriasRam = memoriasRam;
     }
 
     public Procesador getProcesador() {
