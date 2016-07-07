@@ -6,12 +6,10 @@ using System.Web.Script.Serialization;
 
 namespace HardwareCollector.Conexion
 {
-
-    public class ComandoReportar : Comando
+    public class ComandoInicio:Comando
     {
+        public ComandoInicio() : base("inicio") {
 
-        public ComandoReportar() : base("reportar")
-        {
         }
         
     }

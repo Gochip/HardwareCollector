@@ -8,8 +8,46 @@ using HardwareCollector.Componente;
 namespace HardwareCollector.Conexion
 {
 
-    public class ComandoInformar: Comando
+    public class ComandoInformar:Comando
     {
+
+        public Datos datos;
+        public ComandoInformar() : base("informar") {
+
+        }
+
+        public class Datos
+        {
+            public string id_solicitud;
+            public List<ElementoInformacion> informacion;
+        }
+
+        public class ElementoInformacion {
+            public string clave;
+            public List<DatosInformacion> datos;
+        }
+
+        public class DatosInformacion {
+            public string clave;
+            public object valor;
+        }
+
+        public class ElementoProcesador: ElementoInformacion
+        {
+            public ElementoProcesador() {
+                clave = "procesador";
+                datos.Add(new DatosInformacion() { clave = "nombre", valor = "" });
+                datos.Add(new DatosInformacion() { clave = "descripcion", valor = "" });
+                datos.Add(new DatosInformacion() { clave = "fabricante", valor = "" });
+                datos.Add(new DatosInformacion() { clave = "arquitectura", valor = "" });
+                datos.Add(new DatosInformacion() { clave = "cantidad_nucleos", valor = -1 });
+                datos.Add(new DatosInformacion() { clave = "cantidad_procesador", valor = -1 });
+                datos.Add(new DatosInformacion() { clave = "velocidad", valor = -1 });
+                datos.Add(new DatosInformacion() { clave = "tamanio_cache", valor = -1 });
+            }
+        }
+
+        /*
         public ComandoInformar(Maquina maquina, int informe, int reporte):base("informar") {
             this.datos = new DatoComandoInformar()
             {
@@ -36,15 +74,16 @@ namespace HardwareCollector.Conexion
         }
 
         public override string GetJson() {
-            /*Comando json = new Comando
+            Comando json = new Comando
             {
                 comando = "informar",
                 parametros = new ParametroComandoInformar {
                         todos = true,
                         id_informe = 1
                 }
-            };*/
+            };
             return new JavaScriptSerializer().Serialize(null);
         }
+    */
     }
 }
