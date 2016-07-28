@@ -21,85 +21,100 @@ namespace HardwareCollector
             {
                 if (ControladorArchivoConfiguracion.ExisteArchivo())
                 {
-                    Console.WriteLine("existe archivo");
                     ArchivoConfiguracion archivo = ControladorArchivoConfiguracion.LeerArchivo();
                     //si es el archivo no tiene la direccion del servidor, termina...
-                    //si posee la direccion del servidor
-                    Cliente cliente = new Cliente();
-                    cliente.ipServidor = archivo.configuracion.servidor.ip;
-                    cliente.puertoServidor = archivo.configuracion.servidor.puerto;
-                    cliente.conectar();
-                    //si no encuentra su id, le solicita al servidor
-                    if (archivo.id.ToString().Length == 0)
+                    if (ControladorArchivoConfiguracion.PoseeIpValida(archivo) && ControladorArchivoConfiguracion.PoseePuertoValido(archivo))
                     {
-                        cliente.enviarComando(new ComandoMaquinaNueva());
-                        ComandoMaquinaRegistrada comandoMaquinaRegistrada = ((ComandoMaquinaRegistrada)cliente.recibirComando());
-                        string id = comandoMaquinaRegistrada.datos.id;
-                        archivo.id = id;
-                        ControladorArchivoConfiguracion.EscribirArchivo(archivo);
-                        cliente.enviarComando(new ComandoInicio());
-                        //necesito configuracion
-                        //espero el mensaje del servidor
-                        //ComandoConfigurar comando = ((ComandoConfigurar)cliente.recibirComando());
+                        Cliente cliente = new Cliente();
+                        cliente.ipServidor = archivo.configuracion.servidor.ip;
+                        cliente.puertoServidor = archivo.configuracion.servidor.puerto;
+                        cliente.conectar();
+                        //si no encuentra su id, le solicita al servidor
+                        if (!archivo.PoseeId())
+                        {
+                            cliente.enviarComando(new ComandoMaquinaNueva());
+                            ComandoMaquinaRegistrada comandoMaquinaRegistrada = ((ComandoMaquinaRegistrada)cliente.recibirComando());
+                            string id = comandoMaquinaRegistrada.datos.id;
+                            archivo.id = id;
+                            ControladorArchivoConfiguracion.EscribirArchivo(archivo);
+                            cliente.enviarComando(new ComandoInicio());
+                            //necesito configuracion
+                            //espero el mensaje del servidor
+                            //ComandoConfigurar comando = ((ComandoConfigurar)cliente.recibirComando());
+                        }
+                        else
+                        {
+                            //aviso que me conecte y puedo empezar a trabajar
+                            cliente.enviarComando(new ComandoInicio());
+                        }
+                        //...
+                        //estoy en funcionamiento
+                        Comando comando = cliente.recibirComando();
+                        if (comando is ComandoConfigurar)
+                        {
+                            //piso la configuracion actual del cliente, podria solo pisar la parte de informes (y no la id cliente y datos del servidor)
+                            ComandoConfigurar comandoConfigurar = (ComandoConfigurar)comando;
+                            archivo = comandoConfigurar.datos.configuracion;
+                            ControladorArchivoConfiguracion.EscribirArchivo(archivo);
+                        }
+                        else if (comando is ComandoSolicitar)
+                        {
+                            ComandoSolicitar comandoSolicitar = (ComandoSolicitar)comando;
+                            ComandoInformar comandoInformar = new ComandoInformar();
+                            comandoInformar.datos.id_solicitud = comandoSolicitar.datos.id_solicitud;
+                            List<ComandoInformar.ElementoInformacion> informacionInformar = new List<ComandoInformar.ElementoInformacion>();
+                            List<string> informacionSolicitada = comandoSolicitar.datos.informacion;
+                            Recolector recolector = new Recolector();
+                            //por defecto pido toda la maquina, es ineficiente
+                            Maquina maquina = recolector.GetMaquina();
+                            for (int i = 0; i < informacionSolicitada.Count; i++)
+                            {
+                                if (informacionSolicitada[i] == "procesador")
+                                {
+                                    Procesador procesador = maquina.Procesador;
+                                    informacionInformar.Add(new ComandoInformar.ElementoInformacion()
+                                    {
+                                        clave = "procesador"
+                                    });
+                                }
+                                else if (informacionSolicitada[i] == "memorias_ram")
+                                {
+
+                                }
+                                else if (informacionSolicitada[i] == "discos_duros")
+                                {
+
+                                }
+                            }
+                            comandoInformar.datos.informacion = informacionInformar;
+                            cliente.enviarComando(comandoInformar);
+                        }
                     }
                     else {
-                        //aviso que me conecte y puedo empezar a trabajar
-                        cliente.enviarComando(new ComandoInicio());
-                    }
-                    //...
-                    //estoy en funcionamiento
-                    Comando comando = cliente.recibirComando();
-                    if (comando is ComandoConfigurar)
-                    {
-                        //piso la configuracion actual del cliente, podria solo pisar la parte de informes (y no la id cliente y datos del servidor)
-                        ComandoConfigurar comandoConfigurar = (ComandoConfigurar) comando;
-                        archivo = comandoConfigurar.datos.configuracion;
-                        ControladorArchivoConfiguracion.EscribirArchivo(archivo);
-                    }
-                    else if (comando is ComandoSolicitar) {
-                        ComandoSolicitar comandoSolicitar = (ComandoSolicitar)comando;
-                        ComandoInformar comandoInformar = new ComandoInformar();
-                        comandoInformar.datos.id_solicitud = comandoSolicitar.datos.id_solicitud;
-                        List<ComandoInformar.ElementoInformacion> informacionInformar = new List<ComandoInformar.ElementoInformacion>();
-                        List<string> informacionSolicitada = comandoSolicitar.datos.informacion;
-                        Recolector recolector = new Recolector();
-                        Maquina maquina = recolector.GetMaquina();
-                        for (int i = 0; i < informacionSolicitada.Count; i++)
-                        {
-                            if (informacionSolicitada[i] == "procesador") {
-                                Procesador procesaor = maquina.Procesador;
-                                informacionInformar.Add(new ComandoInformar.ElementoInformacion()
-                                {
-                                    clave = "procesador"
-                                });
-                            }
-                            else if (informacionSolicitada[i] == "memorias_ram")
-                            {
-
-                            }
-                            else if (informacionSolicitada[i] == "discos_duros")
-                            {
-
-                            }
-                        }
-                        comandoInformar.datos.informacion = informacionInformar;
-                        cliente.enviarComando(comandoInformar);
+                        Console.WriteLine("El archivo de configuración existe pero no posee ip y/o puerto válido.");
                     }
                 }
                 else
                 {
                     //si o si debe existir el archivo con la direccion del servidor, sino no puede contectarse...
-                    //termina
                     Console.WriteLine("No existe el archivo de configuración, no es posible hallar el servidor.");
                 }
             }
             catch (SocketException se)
             {
-                Console.WriteLine("SocketException : {0}", se.ToString());
+                //10061:  servidor no encontrado
+                if (se.ErrorCode.Equals(10061))
+                {
+                    Console.WriteLine("Servidor apagado.");
+                }
+                else
+                {
+                    Console.WriteLine("Error en el socket: {0}", se.ToString());
+                }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                Console.WriteLine("Error: {0}", e.ToString());
             }
             Console.ReadLine();
         }

@@ -19,6 +19,7 @@ namespace HardwareCollector.Conexion
 
         public override Comando Deserialize(string json)
         {
+            //return (ComandoMaquinaNueva)new JavaScriptSerializer().Deserialize(json, this.GetType());
             return (Comando)new JavaScriptSerializer().Deserialize(json, this.GetType());
         }
         

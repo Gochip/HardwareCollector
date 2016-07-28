@@ -73,8 +73,7 @@ namespace HardwareCollector.Conexion
 
         public Comando recibirComando() {
             string mensajeRecibido = recibir();
-            //return (Comando) Comando.Deserialize(mensajeRecibido);
-            return null;
+            return Comando.DeserializeComando(mensajeRecibido);
         }
 
         public void desconectar()

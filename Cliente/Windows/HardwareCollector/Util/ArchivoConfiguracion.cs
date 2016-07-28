@@ -50,5 +50,9 @@ namespace HardwareCollector.Util
             public string hora;
         }
 
+        public bool PoseeId() {
+            return this.id != null && this.id.Trim().Length > 0;
+        }
+
     }
 }

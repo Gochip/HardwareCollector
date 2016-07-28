@@ -25,7 +25,15 @@ namespace HardwareCollector.Conexion
         public virtual Comando Deserialize(string json) {
             return null;
         }
-        
+
+
+        public static Comando DeserializeComando(string json)
+        {
+            //return (ComandoMaquinaNueva)new JavaScriptSerializer().Deserialize(json, this.GetType());
+            //return (Comando)new JavaScriptSerializer().Deserialize(json, this.GetType());
+            return new JavaScriptSerializer().Deserialize<Comando>(json);
+        }
+
 
     }
 }
