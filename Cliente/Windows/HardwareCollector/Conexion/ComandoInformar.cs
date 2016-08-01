@@ -18,17 +18,23 @@ namespace HardwareCollector.Conexion
 
         public class Datos
         {
+            //opcional
             public string id_solicitud;
+            //es un array asociativo donde la clave es el nombre del componente y el valor un json de atributos y valores del componente
             public List<ElementoInformacion> informacion;
         }
 
         public class ElementoInformacion {
+            //nombre del componente
             public string clave;
+            //json cuyas propiedades son los nombres de los atributos del componente y valor es el valor de tal atributo
             public List<DatosInformacion> datos;
         }
 
         public class DatosInformacion {
+            //es el nombre del atributo del componente
             public string clave;
+            //es el valor para ese atributo del componente
             public object valor;
         }
 
