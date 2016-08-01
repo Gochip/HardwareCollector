@@ -24,72 +24,60 @@ namespace HardwareCollector.Conexion
             public List<ElementoInformacion> informacion;
         }
 
-        public class ElementoInformacion {
-            //nombre del componente
-            public string clave;
-            //json cuyas propiedades son los nombres de los atributos del componente y valor es el valor de tal atributo
-            public List<DatosInformacion> datos;
+        public abstract class ElementoInformacion {
         }
 
-        public class DatosInformacion {
-            //es el nombre del atributo del componente
-            public string clave;
-            //es el valor para ese atributo del componente
-            public object valor;
+        public abstract class DatosInformacion
+        {
         }
 
         public class ElementoProcesador: ElementoInformacion
         {
-            public ElementoProcesador() {
-                clave = "procesador";
-                datos.Add(new DatosInformacion() { clave = "nombre", valor = "" });
-                datos.Add(new DatosInformacion() { clave = "descripcion", valor = "" });
-                datos.Add(new DatosInformacion() { clave = "fabricante", valor = "" });
-                datos.Add(new DatosInformacion() { clave = "arquitectura", valor = "" });
-                datos.Add(new DatosInformacion() { clave = "cantidad_nucleos", valor = -1 });
-                datos.Add(new DatosInformacion() { clave = "cantidad_procesador", valor = -1 });
-                datos.Add(new DatosInformacion() { clave = "velocidad", valor = -1 });
-                datos.Add(new DatosInformacion() { clave = "tamanio_cache", valor = -1 });
-            }
+            public DatosInformacion procesador = new DatosInformacionProcesador();
         }
 
-        /*
-        public ComandoInformar(Maquina maquina, int informe, int reporte):base("informar") {
-            this.datos = new DatoComandoInformar()
-            {
-                procesador = Maquina.Procesador,
-                discos_duros = Maquina.DiscosDuros.ToArray(),
-                memorias_ram = Maquina.MemoriasRam.ToArray(),
-            };
-        }
-
-        public Maquina Maquina { set; get; }
-
-        public class ParametroComandoInformar: Parametro
+        public class ElementoMemoria : ElementoInformacion
         {
-            public int id_informe { get; set; }
-            public bool respuesta { get; set; }
-            public int id_reporte { get; set; }
+            public List<DatosInformacionMemoriasRam> memorias_ram = new List<DatosInformacionMemoriasRam>();
         }
 
-        public DatoComandoInformar datos { get; set; }
-        public class DatoComandoInformar {
-            public Procesador procesador { get; set; }
-            public DiscoDuro[] discos_duros{ get; set; }
-            public MemoriaRam[] memorias_ram { get; set; }
+        public class ElementoDiscoDuro : ElementoInformacion
+        {
+            public List<DatosInformacionDiscosDuros> discos_duros = new List<DatosInformacionDiscosDuros>();
         }
 
-        public override string GetJson() {
-            Comando json = new Comando
-            {
-                comando = "informar",
-                parametros = new ParametroComandoInformar {
-                        todos = true,
-                        id_informe = 1
-                }
-            };
-            return new JavaScriptSerializer().Serialize(null);
+        public class DatosInformacionProcesador : DatosInformacion {
+            public string nombre;
+            public string descripcion;
+            public string fabricante;
+            public string arquitectura;
+            public string cantidad_nucleos;
+            public int cantidad_procesadores;
+            public string velocidad;
+            public string tamanio_cache;
         }
-    */
+
+        public class DatosInformacionDiscosDuros : DatosInformacion
+        {
+            public string fabricante;
+            public string modelo;
+            public string numero_serie;
+            public string tipo_interfaz;
+            public string firmware;
+            public string cantidad_particiones;
+            public string tamanio;
+        }
+
+        public class DatosInformacionMemoriasRam : DatosInformacion
+        {
+            public string banco;
+            public string tecnolgia;
+            public string fabricante;
+            public string numero_serie;
+            public string tamanio_bus_datos;
+            public string velocidad;
+            public string tamanio;
+        }
+        
     }
 }

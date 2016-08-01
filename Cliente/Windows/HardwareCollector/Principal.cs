@@ -73,7 +73,7 @@ namespace HardwareCollector
                                 {
                                     Procesador procesador = maquina.Procesador;
                                     ComandoInformar.ElementoProcesador elementoProcesador = new ComandoInformar.ElementoProcesador();
-                                    //elementoProcesador
+                                    
                                     informacionInformar.Add(elementoProcesador);
                                 }
                                 else if (informacionSolicitada[i] == "memorias_ram")
