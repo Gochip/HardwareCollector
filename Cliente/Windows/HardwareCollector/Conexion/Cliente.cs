@@ -58,9 +58,16 @@ namespace HardwareCollector.Conexion
 
         public void enviar(string datos)
         {
+            /*
             byte[] mensaje = Encoding.ASCII.GetBytes(datos + Comando.caracterFinComando);
             Console.WriteLine("Envie: " + datos);
             int bytesEnviados = socket.Send(mensaje);
+            */
+            int tamanioMensaje = System.Text.Encoding.ASCII.GetByteCount(datos);
+            byte[] bytesDatos = System.Text.Encoding.ASCII.GetBytes(datos);
+            byte[] bytesTamanioMensaje = System.BitConverter.GetBytes(tamanioMensaje);
+            socket.Send(bytesTamanioMensaje);
+            socket.Send(bytesDatos);
         }
 
         public string recibir() {

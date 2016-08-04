@@ -51,7 +51,7 @@ namespace HardwareCollector.Conexion
             public string descripcion;
             public string fabricante;
             public string arquitectura;
-            public string cantidad_nucleos;
+            public int cantidad_nucleos;
             public int cantidad_procesadores;
             public string velocidad;
             public string tamanio_cache;
@@ -64,14 +64,14 @@ namespace HardwareCollector.Conexion
             public string numero_serie;
             public string tipo_interfaz;
             public string firmware;
-            public string cantidad_particiones;
+            public int cantidad_particiones;
             public string tamanio;
         }
 
         public class DatosInformacionMemoriasRam : DatosInformacion
         {
             public string banco;
-            public string tecnolgia;
+            public string tecnologia;
             public string fabricante;
             public string numero_serie;
             public string tamanio_bus_datos;

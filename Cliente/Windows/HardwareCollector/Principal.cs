@@ -73,16 +73,49 @@ namespace HardwareCollector
                                 {
                                     Procesador procesador = maquina.Procesador;
                                     ComandoInformar.ElementoProcesador elementoProcesador = new ComandoInformar.ElementoProcesador();
-                                    
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).nombre = procesador.Nombre;
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).descripcion = procesador.Descripcion;
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).fabricante = procesador.Fabricante;
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).arquitectura = procesador.Arquitectura;
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).cantidad_nucleos = procesador.CantidadNucleos;
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).velocidad = procesador.Velocidad.ToString();
+                                    ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.procesador).tamanio_cache = procesador.Cache.ToString();
                                     informacionInformar.Add(elementoProcesador);
                                 }
                                 else if (informacionSolicitada[i] == "memorias_ram")
                                 {
-
+                                    List<MemoriaRam> memorias = maquina.MemoriasRam;
+                                    ComandoInformar.ElementoMemoria elementoMemoria = new ComandoInformar.ElementoMemoria();
+                                    foreach(MemoriaRam memoria in memorias) {
+                                        ComandoInformar.DatosInformacionMemoriasRam dato = new ComandoInformar.DatosInformacionMemoriasRam();
+                                        dato.banco = memoria.Banco;
+                                        dato.tecnologia = memoria.Tecnologia;
+                                        dato.fabricante = memoria.Fabricante;
+                                        dato.numero_serie = memoria.NumeroSerie;
+                                        dato.tamanio_bus_datos = memoria.TamanioBusDatos;
+                                        dato.velocidad = memoria.Velocidad.ToString();
+                                        dato.tamanio = memoria.Capacidad.ToString();
+                                        elementoMemoria.memorias_ram.Add(dato);
+                                    }
+                                    informacionInformar.Add(elementoMemoria);
                                 }
                                 else if (informacionSolicitada[i] == "discos_duros")
                                 {
-
+                                    List<DiscoDuro> discos = maquina.DiscosDuros;
+                                    ComandoInformar.ElementoDiscoDuro elemento = new ComandoInformar.ElementoDiscoDuro();
+                                    foreach (DiscoDuro disco in discos)
+                                    {
+                                        ComandoInformar.DatosInformacionDiscosDuros dato = new ComandoInformar.DatosInformacionDiscosDuros();
+                                        dato.fabricante = disco.Fabricante;
+                                        dato.modelo = disco.Modelo;
+                                        dato.numero_serie = disco.NumeroSerie;
+                                        dato.tipo_interfaz = disco.TipoInterfaz;
+                                        dato.firmware = disco.Firmware;
+                                        dato.cantidad_particiones = disco.CantidadParticiones;
+                                        dato.tamanio = disco.Capacidad.ToString();
+                                        elemento.discos_duros.Add(dato);
+                                    }
+                                    informacionInformar.Add(elemento);
                                 }
                             }
                             comandoInformar.datos.informacion = informacionInformar;
