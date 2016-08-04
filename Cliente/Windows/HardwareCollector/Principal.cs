@@ -36,6 +36,7 @@ namespace HardwareCollector
                             ComandoMaquinaRegistrada comandoMaquinaRegistrada = ((ComandoMaquinaRegistrada)cliente.recibirComando());
                             string id = comandoMaquinaRegistrada.datos.id;
                             archivo.id = id;
+                            Console.WriteLine("id recibido " + id);
                             ControladorArchivoConfiguracion.EscribirArchivo(archivo);
                             cliente.enviarComando(new ComandoInicio());
                             //necesito configuracion

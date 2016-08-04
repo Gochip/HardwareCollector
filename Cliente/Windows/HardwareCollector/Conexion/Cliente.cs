@@ -5,6 +5,8 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 
 namespace HardwareCollector.Conexion
 {
@@ -19,11 +21,12 @@ namespace HardwareCollector.Conexion
         {
             try
             {
-                
+
                 conectar();
                 //socket iniciado
                 Console.WriteLine("Conectado");
-                while (true) {
+                while (true)
+                {
                     string mensaje = recibir();
                     Console.WriteLine(mensaje);
                     if (mensaje == "fin")
@@ -52,7 +55,8 @@ namespace HardwareCollector.Conexion
             //socket.ReceiveTimeout = 5000;//5 segundos espera como timeout antes de lanzar SocketException al tratar de leer datos recibidos
         }
 
-        public void enviarComando(Comando comando) {
+        public void enviarComando(Comando comando)
+        {
             this.enviar(comando.Serialize());
         }
 
@@ -70,17 +74,75 @@ namespace HardwareCollector.Conexion
             socket.Send(bytesDatos);
         }
 
-        public string recibir() {
-            byte[] buffer = new byte[1024];
+        public string recibir()
+        {
+            /*byte[] buffer = new byte[1024];
             int bytesRecibidos = socket.Receive(buffer);
             //bytesRecibidos es la cantidad de bytes recibidos
             string mensaje = Encoding.ASCII.GetString(buffer, 0, bytesRecibidos);
-            return mensaje;
+            return mensaje;*/
+            byte[] rcvLenBytes = new byte[4];
+            socket.Receive(rcvLenBytes);
+            int rcvLen = System.BitConverter.ToInt32(rcvLenBytes, 0);
+            byte[] rcvBytes = new byte[rcvLen];
+            socket.Receive(rcvBytes);
+            String rcv = System.Text.Encoding.ASCII.GetString(rcvBytes);
+            return rcv;
         }
 
-        public Comando recibirComando() {
+        public Comando recibirComando()
+        {
             string mensajeRecibido = recibir();
-            return Comando.DeserializeComando(mensajeRecibido);
+            string patron = "[\\\"|']?comando[\\\"|']?\\s*:\\s*[\\\"|'](.+)[\\\"|']";
+            string nombreComando = "";
+            Regex regexp = new Regex(patron, RegexOptions.IgnoreCase);
+            Match m = regexp.Match(mensajeRecibido);
+            int matchCount = 0;
+            while (m.Success)
+            {
+                Group g = m.Groups[1];
+                nombreComando = g.ToString();
+                Console.WriteLine("Comando: " + g.ToString());
+                m = m.NextMatch();
+                matchCount++;
+            }
+            Comando comando = null;
+            if (matchCount > 0)
+            {
+                if (nombreComando == "configurar")
+                {
+                    comando = (ComandoConfigurar)new JavaScriptSerializer().Deserialize<ComandoConfigurar>(mensajeRecibido);
+                }
+                else if (nombreComando == "informar")
+                {
+                    comando = (ComandoInformar)new JavaScriptSerializer().Deserialize<ComandoInformar>(mensajeRecibido);
+                }
+                else if (nombreComando == "inicio")
+                {
+                    comando = (ComandoInicio)new JavaScriptSerializer().Deserialize<ComandoInicio>(mensajeRecibido);
+                }
+                else if (nombreComando == "maquina_nueva")
+                {
+                    comando = (ComandoMaquinaNueva)new JavaScriptSerializer().Deserialize<ComandoMaquinaNueva>(mensajeRecibido);
+                }
+                else if (nombreComando == "maquina_registrada")
+                {
+                    comando = (ComandoMaquinaRegistrada)new JavaScriptSerializer().Deserialize<ComandoMaquinaRegistrada>(mensajeRecibido);
+                }
+                else if (nombreComando == "reportar")
+                {
+                    comando = (ComandoReportar)new JavaScriptSerializer().Deserialize<ComandoReportar>(mensajeRecibido);
+                }
+                else if (nombreComando == "solicitar")
+                {
+                    comando = (ComandoSolicitar)new JavaScriptSerializer().Deserialize<ComandoSolicitar>(mensajeRecibido);
+                }
+            }
+            else
+            {
+                return null;
+            }
+            return comando;
         }
 
         public void desconectar()
