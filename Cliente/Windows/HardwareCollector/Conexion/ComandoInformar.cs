@@ -13,7 +13,7 @@ namespace HardwareCollector.Conexion
 
         public Datos datos;
         public ComandoInformar() : base("informar") {
-
+            datos = new Datos();
         }
 
         public class Datos
@@ -22,6 +22,10 @@ namespace HardwareCollector.Conexion
             public string id_solicitud;
             //es un array asociativo donde la clave es el nombre del componente y el valor un json de atributos y valores del componente
             public List<ElementoInformacion> informacion;
+            public Datos()
+            {
+                informacion = new List<ElementoInformacion>();
+            }
         }
 
         public abstract class ElementoInformacion {

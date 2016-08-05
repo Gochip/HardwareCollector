@@ -135,6 +135,7 @@ namespace HardwareCollector.Conexion
                 }
                 else if (nombreComando == "solicitar")
                 {
+                    Console.WriteLine(mensajeRecibido);
                     comando = (ComandoSolicitar)new JavaScriptSerializer().Deserialize<ComandoSolicitar>(mensajeRecibido);
                 }
             }

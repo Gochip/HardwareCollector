@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -23,7 +24,6 @@ public class Servidor {
         JSONObject jsonComando = recibirComando(socketCliente);
         System.out.println(jsonComando.get("comando"));
         if ((jsonComando.get("comando")).equals("maquina_nueva")) {
-            System.out.println("!");
             String idUnico = String.valueOf(Math.round((float) (Math.random() * 1000)));
             JSONObject jsonComandoMaquinaRegistrada = new JSONObject();
             jsonComandoMaquinaRegistrada.put("comando", "maquina_registrada");
@@ -35,6 +35,33 @@ public class Servidor {
                     }));
             System.out.println(jsonComandoMaquinaRegistrada.toJSONString());
             enviarComando(socketCliente, jsonComandoMaquinaRegistrada);
+        } else if ((jsonComando.get("comando")).equals("inicio")) {
+            //el cliente encontro su id, me deberia enviar asi sé que consultar en la base de datos
+            //a modo de prueba hago una soliciud iniciada por mi
+//{
+//comando: “solicitar”,
+//datos: {
+//id_solicitud: “id de la solicitud”,
+//informacion: [ “procesador”, “memorias_ram”, “discos_duros”,
+//“otro_componente…”],
+//}
+//}
+            JSONObject jsonComandoSolitud = new JSONObject();
+            jsonComandoSolitud.put("comando", "solicitar");
+            JSONArray componentes = new JSONArray();
+            componentes.add("procesador");
+            componentes.add("discos_duros");
+            componentes.add("memorias_ram");
+            jsonComandoSolitud.put("datos", new JSONObject(
+                    new HashMap<String, Object>() {
+                        {
+                            put("id_solicitud", "i1223s");
+                            put("informacion", componentes);
+                        }
+                    }));
+            System.out.println(jsonComandoSolitud.toJSONString());
+            enviarComando(socketCliente, jsonComandoSolitud);
+            jsonComando = recibirComando(socketCliente);
         }
     }
 

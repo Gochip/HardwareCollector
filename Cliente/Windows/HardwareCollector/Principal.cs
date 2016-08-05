@@ -62,7 +62,9 @@ namespace HardwareCollector
                         {
                             ComandoSolicitar comandoSolicitar = (ComandoSolicitar)comando;
                             ComandoInformar comandoInformar = new ComandoInformar();
+                            Console.WriteLine(comandoSolicitar.datos.id_solicitud);
                             comandoInformar.datos.id_solicitud = comandoSolicitar.datos.id_solicitud;
+                            Console.WriteLine(comandoSolicitar.datos.informacion[0]);
                             List<ComandoInformar.ElementoInformacion> informacionInformar = new List<ComandoInformar.ElementoInformacion>();
                             List<string> informacionSolicitada = comandoSolicitar.datos.informacion;
                             Recolector recolector = new Recolector();
@@ -120,6 +122,7 @@ namespace HardwareCollector
                                 }
                             }
                             comandoInformar.datos.informacion = informacionInformar;
+                            Console.WriteLine("Trato de enviar informacion");
                             cliente.enviarComando(comandoInformar);
                         }
                     }
