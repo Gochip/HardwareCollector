@@ -15,7 +15,7 @@ guardar_respuesta (id_desafio, hash, id_grupo) : booleano
 import socket
 import os
 import os.path
-import _mysql
+import mysql
 import json
 from constants import *
 from subprocess import PIPE, Popen
@@ -110,10 +110,11 @@ class Connection(object):
         Llena el búfer de salida con la respuesta.
         Retorna el código de estado.
         """
+        print(command)
         command_status = COMANDO_INVALIDO
-        json_comando = json.loads(command)
-        resultado = None
         try:
+            json_comando = json.loads(command)
+            resultado = None
             comando = json_comando["comando"]
             #datos = json_comando["datos"]
             if comando == MAQUINA_NUEVA:
@@ -126,7 +127,7 @@ class Connection(object):
                 command_status = OK
         except:
             print("Formato incorrecto de datos")
-        self.output += json.dump(resultado)
+        self.output += json.dumps(resultado)
         return command_status
 
         # COMPLETAR
@@ -187,8 +188,8 @@ class Connection(object):
         self.socket.close()
 
     def maquina_nueva(self):
-        insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
-        mysql.query(insercion)
+        #insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
+        #mysql.query(insercion)
         
         # obtener id insertado
         
@@ -238,7 +239,7 @@ class Connection(object):
         ok = False
         try:
             hash_correcto = self.get_hash(id_desafio)
-            mysql = _mysql.connect('127.0.0.1', self.user, self.password, self.db)
+            mysql = mysql.connect('127.0.0.1', self.user, self.password, self.db)
 
             ok = hash == hash_correcto
             if(hash == hash_correcto):
@@ -263,7 +264,7 @@ class Connection(object):
                 mysql.query(insercion)
                 print ("FALLO")
             mysql.close()
-        except _mysql.Error, e:
+        except mysql.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
             return "ERROR"
         print ("FIN")

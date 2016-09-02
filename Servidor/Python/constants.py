@@ -7,7 +7,7 @@
 # Modificado y adaptado por Parisi Germán para el HardwareCollector. 2015.
 #
 
-DEFAULT_ADDR = 'localhost'
+DEFAULT_ADDR = ''
 DEFAULT_PORT = 30330
 
 
