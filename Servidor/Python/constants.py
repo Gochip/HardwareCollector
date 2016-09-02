@@ -11,8 +11,8 @@ DEFAULT_ADDR = 'localhost'
 DEFAULT_PORT = 30330
 
 
-OBTENER_HASH = 'obtener_hash'
-GUARDAR_RESPUESTA = 'guardar_respuesta'
+MAQUINA_NUEVA = 'maquina_nueva'
+
 SALIR = 'salir'
 
 EOL = '\r\n'

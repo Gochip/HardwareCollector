@@ -16,6 +16,7 @@ import socket
 import os
 import os.path
 import _mysql
+import json
 from constants import *
 from subprocess import PIPE, Popen
 
@@ -109,6 +110,25 @@ class Connection(object):
         Llena el búfer de salida con la respuesta.
         Retorna el código de estado.
         """
+        command_status = COMANDO_INVALIDO
+        json_comando = json.loads(command)
+        resultado = None
+        try:
+            comando = json_comando["comando"]
+            #datos = json_comando["datos"]
+            if comando == MAQUINA_NUEVA:
+                resultado = {}
+                id_maquina = self.maquina_nueva()
+                resultado["comando"] = MAQUINA_NUEVA
+                resultado["datos"] = {"id": id_maquina}
+                print(resultado)
+                print("MAQUINA NUEVA")
+                command_status = OK
+        except:
+            print("Formato incorrecto de datos")
+        self.output += json.dump(resultado)
+        return command_status
+
         # COMPLETAR
         
         # Validar comando.
@@ -165,7 +185,15 @@ class Connection(object):
 
     def close(self):
         self.socket.close()
+
+    def maquina_nueva(self):
+        insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
+        mysql.query(insercion)
         
+        # obtener id insertado
+        
+        return 1
+
     def get_hash(self, id_desafio):
         try:
             id_desafio = int(id_desafio)
