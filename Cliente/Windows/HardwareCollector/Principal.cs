@@ -39,10 +39,10 @@ namespace HardwareCollector
                             archivo.id = id;
                             Console.WriteLine("id recibido " + id);
                             ControladorArchivoConfiguracion.EscribirArchivo(archivo);
-                            //cliente.enviarComando(new ComandoInicio());
+                            cliente.enviarComando(new ComandoInicio());
                             //necesito configuracion
                             //espero el mensaje del servidor
-                            //ComandoConfigurar comando = ((ComandoConfigurar)cliente.recibirComando());
+                            ComandoConfigurar comandoConfigurar = ((ComandoConfigurar)cliente.recibirComando());
                         }
                         else
                         {
