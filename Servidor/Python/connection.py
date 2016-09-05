@@ -15,7 +15,7 @@ guardar_respuesta (id_desafio, hash, id_grupo) : booleano
 import socket
 import os
 import os.path
-import mysql
+import mysql.connector
 import json
 from constants import *
 from subprocess import PIPE, Popen
@@ -33,8 +33,8 @@ class Connection(object):
         self.output = ""
         self.input = ""
         self.user = "root"
-        self.password = "Gochi199236"
-        self.db = "kkkfsdfewf"
+        self.password = "12345678"
+        self.db = "hc_bd"
 
     def get_fileno(self):
         """
@@ -112,7 +112,8 @@ class Connection(object):
         """
         print(command)
         command_status = COMANDO_INVALIDO
-        try:
+        if True:
+        #try:
             json_comando = json.loads(command)
             resultado = None
             comando = json_comando["comando"]
@@ -125,8 +126,8 @@ class Connection(object):
                 print(resultado)
                 print("MAQUINA NUEVA")
                 command_status = OK
-        except:
-            print("Formato incorrecto de datos")
+        #except:
+        #    print("Formato incorrecto de datos")
         self.output += json.dumps(resultado)
         return command_status
 
@@ -188,12 +189,20 @@ class Connection(object):
         self.socket.close()
 
     def maquina_nueva(self):
-        #insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
-        #mysql.query(insercion)
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+
+        insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
+        cursor.execute(insercion)
+        ultimo_id = cursor.lastrowid
         
-        # obtener id insertado
+        cnx.commit()
         
-        return 1
+        cursor.close()
+        
+        cnx.close()
+        
+        return ultimo_id
 
     def get_hash(self, id_desafio):
         try:
