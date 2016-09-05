@@ -11,7 +11,10 @@ DEFAULT_ADDR = ''
 DEFAULT_PORT = 30330
 
 
-MAQUINA_NUEVA = 'maquina_nueva'
+MAQUINA_NUEVA = 'maquina_nueva'  # Cliente -> Servidor
+MAQUINA_REGISTRADA = 'maquina_registrada'  # Servidor -> Cliente
+INICIO = 'inicio'  # Cliente -> Servidor
+CONFIGURAR = 'configurar'  # Servidor -> Cliente
 
 SALIR = 'salir'
 
@@ -20,6 +23,7 @@ EOL = '\r\n'
 OK = 0
 ERROR = 100
 COMANDO_INVALIDO = 200
+
 
 def valid_status(s):
     return s in error_messages.keys()

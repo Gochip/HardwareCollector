@@ -122,10 +122,10 @@ INSERT INTO tipos_informes (nombre) VALUES ('inicio_sistema');
 INSERT INTO tipos_informes (nombre) VALUES ('inicio_sesion');
 INSERT INTO tipos_informes (nombre) VALUES ('apagado');
 
-SET @id_informe_programado = (SELECT id FROM componentes WHERE nombre='programado');
-SET @id_informe_inicio_sistema = (SELECT id FROM componentes WHERE nombre='inicio_sistema');
-SET @id_informe_inicio_sesion = (SELECT id FROM componentes WHERE nombre='inicio_sesion');
-SET @id_informe_apagado = (SELECT id FROM componentes WHERE nombre='apagado');
+SET @id_informe_programado = (SELECT id FROM tipos_informes WHERE nombre='programado');
+SET @id_informe_inicio_sistema = (SELECT id FROM tipos_informes WHERE nombre='inicio_sistema');
+SET @id_informe_inicio_sesion = (SELECT id FROM tipos_informes WHERE nombre='inicio_sesion');
+SET @id_informe_apagado = (SELECT id FROM tipos_informes WHERE nombre='apagado');
 
 /*
 	-- Informe por defecto usado al crear una maquina

@@ -36,27 +36,30 @@ class Server(object):
             while True:
                 events = poll.poll()
                 for (fileno, event) in events:
-                    if event & select.POLLIN:
-                        if fileno == self.socket.fileno():
-                            (client, address) = self.socket.accept()
-                            client.setblocking(0)
-                            poll.register(client, select.POLLIN)
-                            con = connection.Connection(client)
-                            clients[client.fileno()] = con
-                        else:
-                            con = clients[fileno]
-                            if con.handle_input():
-                                poll.modify(con.get_fileno(), select.POLLOUT)
+                    #try:
+                        if event & select.POLLIN:
+                            if fileno == self.socket.fileno():
+                                (client, address) = self.socket.accept()
+                                client.setblocking(0)
+                                poll.register(client, select.POLLIN)
+                                con = connection.Connection(client)
+                                clients[client.fileno()] = con
                             else:
+                                con = clients[fileno]
+                                if con.handle_input():
+                                    poll.modify(con.get_fileno(), select.POLLOUT)
+                                else:
+                                    poll.unregister(con.get_fileno())
+                                    con.close()
+                        elif event & select.POLLOUT:
+                            con = clients[fileno]
+                            if not con.handle_output():
+                                poll.modify(con.get_fileno(), select.POLLIN)
+                            if con.is_closed():
                                 poll.unregister(con.get_fileno())
                                 con.close()
-                    elif event & select.POLLOUT:
-                        con = clients[fileno]
-                        if not con.handle_output():
-                            poll.modify(con.get_fileno(), select.POLLIN)
-                        if con.is_closed():
-                            poll.unregister(con.get_fileno())
-                            con.close()
+                    #except Exception:
+                    #    print "Se desconectó un cliente"
         except KeyboardInterrupt or socket.error:
             print "\nCerrando server"
             self.socket.close()

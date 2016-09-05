@@ -35,6 +35,7 @@ class Connection(object):
         self.user = "root"
         self.password = "12345678"
         self.db = "hc_bd"
+        self.id_maquina = None
 
     def get_fileno(self):
         """
@@ -121,10 +122,17 @@ class Connection(object):
             if comando == MAQUINA_NUEVA:
                 resultado = {}
                 id_maquina = self.maquina_nueva()
-                resultado["comando"] = MAQUINA_NUEVA
+                resultado["comando"] = MAQUINA_REGISTRADA
                 resultado["datos"] = {"id": id_maquina}
-                print(resultado)
-                print("MAQUINA NUEVA")
+                self.id_maquina = id_maquina
+                print("MAQUINA REGISTRADA")
+                command_status = OK
+            elif comando == INICIO:
+                resultado = {}
+                id_maquina = self.inicio()
+                resultado["comando"] = CONFIGURACION
+                resultado["datos"] = {"id": id_maquina}
+                print("MAQUINA REGISTRADA")
                 command_status = OK
         #except:
         #    print("Formato incorrecto de datos")
@@ -188,21 +196,117 @@ class Connection(object):
     def close(self):
         self.socket.close()
 
+    def get_tipo_informe(self, nombre_informe):
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = "SELECT id FROM tipos_informes WHERE nombre='%s'"
+
+        id_tipo_informe = None
+        cursor.execute(consulta, nombre_informe)
+        for (id_tipo) in cursor:
+            id_tipo_informe = id_tipo
+        return id_tipo_informe
+
     def maquina_nueva(self):
+        """
+            Método que ejecuta el comando MAQUINA_NUEVA.
+            Retorna el ID de máquina creada.
+        """
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
 
         insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
         cursor.execute(insercion)
-        ultimo_id = cursor.lastrowid
-        
+        ultimo_id_maquina = cursor.lastrowid
+
+        #id_tipo_informe = self.get_tipo_informe('inicio_sistema')
+        id_tipo_informe_inicio_sistema = 1
+
+        insercion1 = ("INSERT INTO informes_x_maquina "
+                     "(id_maquina, id_tipo_informe) "
+                     "VALUES (%s, %s)");
+        cursor.execute(insercion1, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
+        ultimo_id_informe = cursor.lastrowid
+
+        """insercion2 = ("INSERT INTO componentes_x_informe "
+                      "(id_maquina, id_tipo_informe, id_componente) "
+                      "VALUES (%(id_maquina)s, %(id_tipo_informe)s, 1)");
+        cursor.execute(insercion2, {'id_maquina': id_maquina, 'id_tipo_informe': ultimo_id_informe})
+
+        insercion3 = ("INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) "
+                      "VALUES (%(id_maquina)s, %(id_tipo_informe)s, 2)")
+        cursor.execute(insercion3, {'id_maquina': id_maquina, 'id_tipo_informe': ultimo_id_informe})
+
+        insercion4 = ("INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) "
+                      "VALUES (%(id_maquina)s, %(id_tipo_informe)s, 3)")
+        cursor.execute(insercion4, {'id_maquina': id_maquina, 'id_tipo_informe': ultimo_id_informe})"""
+
         cnx.commit()
-        
         cursor.close()
-        
-        cnx.close()
-        
-        return ultimo_id
+        cnx.close()        
+        return ultimo_id_maquina
+
+    def get_configuracion_informe(self, id_informe):
+        """
+            Retorna la configuración de un informe
+        """
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = "SELECT c.nombre FROM componentes_x_informe AS cxi INNER JOIN componentes AS c ON (cxi.id_componente = c.id) WHERE id_informe=%d"
+
+        componentes = []
+        cursor.execute(consulta, id_informe)
+        for (nombre) in cursor:
+            componentes.append(nombre)
+        return componentes
+
+    def get_tipos_informes(self, id_informe):
+        """
+            Retorna una tupla con el tipo de informe
+        """
+        """cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = "SELECT id FROM informes AS i INNER JOIN tipos_informes WHERE id_maquina=%d"
+        cursor.execute(consulta, id_maquina)
+        informes = []
+        for (id_informe) in cursor:
+            informes.append(id_informe)
+        return informes"""
+        pass
+
+    def get_informes(self, id_maquina):
+        """
+            Retorna todos los id de informes para una máquina dada
+        """
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = "SELECT id FROM informes WHERE id_maquina=%d"
+        cursor.execute(consulta, id_maquina)
+        informes = []
+        for (id_informe) in cursor:
+            informes.append(id_informe)
+        return informes
+
+    def inicio(self):
+        """
+            Método que ejecuta el comando INICIO.
+        """
+        configuracion = {}
+        if self.id_maquina is not None:
+            informes = self.get_informes(self.id_maquina)
+            configuracion["informes"] = {}
+            for id_informe in informes:
+                componentes = self.get_configuracion_informe(id_informe)
+                configuracion["informes"] = []
+                informe = {}
+                informe["id"] = id_informe
+                informe["informacion"] = componentes
+                #informe["tipo"] = tipo
+                #if tipo == "programado":
+                #    informe["hora"] = "12:00"
+                configuracion["informes"].append(informe)
+            return False
+        return configuracion
 
     def get_hash(self, id_desafio):
         try:
