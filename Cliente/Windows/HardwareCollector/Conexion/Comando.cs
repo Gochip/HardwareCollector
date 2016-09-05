@@ -9,7 +9,7 @@ namespace HardwareCollector.Conexion
 
     public abstract class Comando
     {
-        public const string caracterFinComando = "<EOF>";
+        public const string caracterFinComando = "\n";
         public string comando { get; set; }
 
         public Comando(string nombre)

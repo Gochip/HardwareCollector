@@ -34,11 +34,12 @@ namespace HardwareCollector
                         {
                             cliente.enviarComando(new ComandoMaquinaNueva());
                             ComandoMaquinaRegistrada comandoMaquinaRegistrada = ((ComandoMaquinaRegistrada)cliente.recibirComando());
+                            //ComandoMaquinaRegistrada comandoMaquinaRegistrada = (ComandoMaquinaRegistrada)new JavaScriptSerializer().Deserialize<ComandoMaquinaRegistrada>(cliente.recibir());
                             string id = comandoMaquinaRegistrada.datos.id;
                             archivo.id = id;
                             Console.WriteLine("id recibido " + id);
                             ControladorArchivoConfiguracion.EscribirArchivo(archivo);
-                            cliente.enviarComando(new ComandoInicio());
+                            //cliente.enviarComando(new ComandoInicio());
                             //necesito configuracion
                             //espero el mensaje del servidor
                             //ComandoConfigurar comando = ((ComandoConfigurar)cliente.recibirComando());
