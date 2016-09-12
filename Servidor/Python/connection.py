@@ -226,20 +226,19 @@ class Connection(object):
                      "(id_maquina, id_tipo_informe) "
                      "VALUES (%s, %s)");
         cursor.execute(insercion1, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
-        ultimo_id_informe = cursor.lastrowid
 
-        """insercion2 = ("INSERT INTO componentes_x_informe "
+        insercion2 = ("INSERT INTO componentes_x_informe "
                       "(id_maquina, id_tipo_informe, id_componente) "
-                      "VALUES (%(id_maquina)s, %(id_tipo_informe)s, 1)");
-        cursor.execute(insercion2, {'id_maquina': id_maquina, 'id_tipo_informe': ultimo_id_informe})
+                      "VALUES (%s, %s, 1)")
+        cursor.execute(insercion2, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
 
         insercion3 = ("INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) "
-                      "VALUES (%(id_maquina)s, %(id_tipo_informe)s, 2)")
-        cursor.execute(insercion3, {'id_maquina': id_maquina, 'id_tipo_informe': ultimo_id_informe})
+                      "VALUES (%s, %s, 2)")
+        cursor.execute(insercion3, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
 
         insercion4 = ("INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) "
-                      "VALUES (%(id_maquina)s, %(id_tipo_informe)s, 3)")
-        cursor.execute(insercion4, {'id_maquina': id_maquina, 'id_tipo_informe': ultimo_id_informe})"""
+                      "VALUES (%s, %s, 3)")
+        cursor.execute(insercion4, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
 
         cnx.commit()
         cursor.close()
@@ -385,3 +384,7 @@ class Connection(object):
             return "OK"
         else:
             return "NO"
+
+if __name__ == "__main__":
+    con = Connection(None)
+    con.maquina_nueva()
