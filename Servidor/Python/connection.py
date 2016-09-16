@@ -129,9 +129,9 @@ class Connection(object):
                 command_status = OK
             elif comando == INICIO:
                 resultado = {}
-                id_maquina = self.inicio()
+                respuesta = self.inicio()
                 resultado["comando"] = CONFIGURACION
-                resultado["datos"] = {"id": id_maquina}
+                resultado["datos"] = {"configuracion": respuesta}
                 print("MAQUINA REGISTRADA")
                 command_status = OK
         #except:
@@ -236,32 +236,36 @@ class Connection(object):
                      "(id_maquina, id_tipo_informe) "
                      "VALUES (%s, %s)")
         cursor.execute(insercion1, (id_maquina_insertado, id_tipo_informe_inicio_sistema))
+        id_informe_insertado = cursor.lastrowid
 
         # Agregar for componentes
         ids_componentes = self.get_ids_componentes()
         for id_componente in ids_componentes:
             insercion = ("INSERT INTO componentes_x_informe "
-                         "(id_maquina, id_tipo_informe, id_componente) "
+                         "(id_maquina, id_informe, id_componente) "
                          "VALUES (%s, %s, %s)")
-            cursor.execute(insercion, (id_maquina_insertado, id_tipo_informe_inicio_sistema, id_componente))
+            cursor.execute(insercion, (id_maquina_insertado, id_informe_insertado, id_componente))
 
         cnx.commit()
         cursor.close()
         cnx.close()        
         return id_maquina_insertado
 
-    def get_configuracion_informe(self, id_informe):
+    def get_componentes_informe(self, id_informe):
         """
             Retorna la configuración de un informe
         """
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
-        consulta = "SELECT c.nombre FROM componentes_x_informe AS cxi INNER JOIN componentes AS c ON (cxi.id_componente = c.id) WHERE id_informe=%d"
+        consulta = """SELECT c.nombre
+                    FROM componentes_x_informe AS cxi
+                    INNER JOIN componentes AS c ON (c.id = cxi.id_componente)
+                    WHERE cxi.id_informe=%s"""
 
         componentes = []
-        cursor.execute(consulta, id_informe)
+        cursor.execute(consulta, (id_informe, ))
         for (nombre) in cursor:
-            componentes.append(nombre)
+            componentes.append(nombre[0])
         return componentes
 
     def get_tipos_informes(self, id_informe):
@@ -284,24 +288,30 @@ class Connection(object):
         """
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
-        consulta = "SELECT id FROM informes WHERE id_maquina=%d"
-        cursor.execute(consulta, id_maquina)
+        consulta = """SELECT ixm.id_informe FROM maquinas AS m
+                    INNER JOIN informes_x_maquina AS ixm ON (m.id = ixm.id_maquina)
+                    WHERE m.id=%s"""
+        cursor.execute(consulta, (id_maquina, ))
         informes = []
         for (id_informe) in cursor:
-            informes.append(id_informe)
+            informes.append(id_informe[0])
         return informes
 
-    def inicio(self):
+    def inicio(self, id_maquina):
         """
             Método que ejecuta el comando INICIO.
         """
-        configuracion = {}
+        resultado = {}
         if self.id_maquina is not None:
-            informes = self.get_informes(self.id_maquina)
-            configuracion["informes"] = {}
+            id_maquina = self.id_maquina
+
+        if id_maquina is not None:
+            resultado["id"] = id_maquina
+            configuracion = {}
+            informes = self.get_informes(id_maquina)
+            configuracion["informes"] = []
             for id_informe in informes:
-                componentes = self.get_configuracion_informe(id_informe)
-                configuracion["informes"] = []
+                componentes = self.get_componentes_informe(id_informe)
                 informe = {}
                 informe["id"] = id_informe
                 informe["informacion"] = componentes
@@ -309,10 +319,12 @@ class Connection(object):
                 #if tipo == "programado":
                 #    informe["hora"] = "12:00"
                 configuracion["informes"].append(informe)
-            return False
-        return configuracion
+            resultado["configuracion"] = configuracion
+        return resultado
 
 
 if __name__ == "__main__":
     con = Connection(None)
-    con.maquina_nueva()
+    #con.maquina_nueva()
+    dic = con.inicio(2)
+    print (dic)

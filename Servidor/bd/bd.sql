@@ -68,10 +68,10 @@ CREATE TABLE informes_x_maquina(
 
 CREATE TABLE componentes_x_informe(
     id_maquina INT NOT NULL,
-    id_tipo_informe INT NOT NULL,
+    id_informe INT NOT NULL,
 	id_componente INT NOT NULL,
-    PRIMARY KEY(id_maquina, id_tipo_informe, id_componente),
-    FOREIGN KEY(id_maquina, id_tipo_informe) REFERENCES informes_x_maquina(id_maquina, id_tipo_informe)
+    PRIMARY KEY(id_maquina, id_informe, id_componente),
+    FOREIGN KEY(id_informe) REFERENCES informes_x_maquina(id_informe)
     -- FOREIGN KEY(id_componente, id_maquina) REFERENCES componentes_x_maquinas(id_componente, id_maquina)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
