@@ -199,13 +199,24 @@ class Connection(object):
     def get_tipo_informe(self, nombre_informe):
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
-        consulta = "SELECT id FROM tipos_informes WHERE nombre='%s'"
+        consulta = ("SELECT id FROM tipos_informes WHERE nombre=%s")
 
+        cursor.execute(consulta, (nombre_informe, ))
         id_tipo_informe = None
-        cursor.execute(consulta, nombre_informe)
         for (id_tipo) in cursor:
-            id_tipo_informe = id_tipo
+            id_tipo_informe = id_tipo[0]
         return id_tipo_informe
+
+    def get_ids_componentes(self):
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = ("SELECT id FROM componentes")
+
+        cursor.execute(consulta)
+        ids = []
+        for (id_componente) in cursor:
+            ids.append(id_componente[0])
+        return ids
 
     def maquina_nueva(self):
         """
@@ -217,33 +228,27 @@ class Connection(object):
 
         insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
         cursor.execute(insercion)
-        ultimo_id_maquina = cursor.lastrowid
+        id_maquina_insertado = cursor.lastrowid
 
-        #id_tipo_informe = self.get_tipo_informe('inicio_sistema')
-        id_tipo_informe_inicio_sistema = 1
+        id_tipo_informe_inicio_sistema = self.get_tipo_informe('inicio_sistema')
 
         insercion1 = ("INSERT INTO informes_x_maquina "
                      "(id_maquina, id_tipo_informe) "
-                     "VALUES (%s, %s)");
-        cursor.execute(insercion1, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
+                     "VALUES (%s, %s)")
+        cursor.execute(insercion1, (id_maquina_insertado, id_tipo_informe_inicio_sistema))
 
-        insercion2 = ("INSERT INTO componentes_x_informe "
-                      "(id_maquina, id_tipo_informe, id_componente) "
-                      "VALUES (%s, %s, 1)")
-        cursor.execute(insercion2, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
-
-        insercion3 = ("INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) "
-                      "VALUES (%s, %s, 2)")
-        cursor.execute(insercion3, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
-
-        insercion4 = ("INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) "
-                      "VALUES (%s, %s, 3)")
-        cursor.execute(insercion4, (ultimo_id_maquina, id_tipo_informe_inicio_sistema))
+        # Agregar for componentes
+        ids_componentes = self.get_ids_componentes()
+        for id_componente in ids_componentes:
+            insercion = ("INSERT INTO componentes_x_informe "
+                         "(id_maquina, id_tipo_informe, id_componente) "
+                         "VALUES (%s, %s, %s)")
+            cursor.execute(insercion, (id_maquina_insertado, id_tipo_informe_inicio_sistema, id_componente))
 
         cnx.commit()
         cursor.close()
         cnx.close()        
-        return ultimo_id_maquina
+        return id_maquina_insertado
 
     def get_configuracion_informe(self, id_informe):
         """
