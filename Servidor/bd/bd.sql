@@ -1,4 +1,4 @@
-/* 	Version: 1.0 
+/*
 	Agrego tablas para informes
 */
 
@@ -56,10 +56,12 @@ CREATE TABLE tipos_informes(
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE informes_x_maquina(
+    id_informe INT NOT NULL AUTO_INCREMENT,
     id_maquina INT NOT NULL,
     id_tipo_informe INT NOT NULL,
     hora_informe_programado TIME NULL, -- Es distintio de null unicamente para reportes informes programados
-    PRIMARY KEY(id_maquina, id_tipo_informe),
+    PRIMARY KEY(id_informe),
+    UNIQUE(id_maquina, id_tipo_informe),
     FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
     FOREIGN KEY(id_tipo_informe) REFERENCES tipos_informes(id)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
@@ -127,10 +129,3 @@ SET @id_informe_inicio_sistema = (SELECT id FROM tipos_informes WHERE nombre='in
 SET @id_informe_inicio_sesion = (SELECT id FROM tipos_informes WHERE nombre='inicio_sesion');
 SET @id_informe_apagado = (SELECT id FROM tipos_informes WHERE nombre='apagado');
 
-/*
-	-- Informe por defecto usado al crear una maquina
-INSERT INTO informes_x_maquina (id_maquina, id_tipo_informe) VALUES (id_maquina, id_informe_inicio_sistema);
-INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) VALUES (id_maquina, id_tipo_informe, id_disco);
-INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) VALUES (id_maquina, id_tipo_informe, id_procesador);
-INSERT INTO componentes_x_informe (id_maquina, id_tipo_informe, id_componente) VALUES (id_maquina, id_tipo_informe, id_memoria_ram);
-*/
