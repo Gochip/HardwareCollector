@@ -118,7 +118,6 @@ class Connection(object):
             json_comando = json.loads(command)
             resultado = None
             comando = json_comando["comando"]
-            #datos = json_comando["datos"]
             if comando == MAQUINA_NUEVA:
                 resultado = {}
                 id_maquina = self.maquina_nueva()
@@ -128,12 +127,17 @@ class Connection(object):
                 print("MAQUINA REGISTRADA")
                 command_status = OK
             elif comando == INICIO:
-                resultado = {}
-                respuesta = self.inicio()
-                resultado["comando"] = CONFIGURACION
-                resultado["datos"] = {"configuracion": respuesta}
-                print("MAQUINA REGISTRADA")
-                command_status = OK
+                datos = json_comando["datos"]
+                if datos is not None:
+                    id_maquina = datos["id"]
+                    resultado = {}
+                    respuesta = self.inicio(id_maquina)
+                    resultado["comando"] = CONFIGURAR
+                    resultado["datos"] = {"configuracion": respuesta}
+                    print("MAQUINA INICIADA")
+                    command_status = OK
+                else:
+                    command_status = ERROR
         #except:
         #    print("Formato incorrecto de datos")
         self.output += json.dumps(resultado)
@@ -183,18 +187,10 @@ class Connection(object):
 
         return command_status"""
 
-    def validate_command(self, command):
-        # Primero chequeamos que los caracteres tengan sentido
-        for i in xrange(0, len(command)):
-            if command[i] not in VALID_CHARS:
-                return False
-        return True
-
-    def validate_argument(self, arg):
-        return self.validate_command(arg)
-
     def close(self):
         self.socket.close()
+
+    # PRIVADOS
 
     def get_tipo_informe(self, nombre_informe):
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
@@ -217,39 +213,6 @@ class Connection(object):
         for (id_componente) in cursor:
             ids.append(id_componente[0])
         return ids
-
-    def maquina_nueva(self):
-        """
-            Método que ejecuta el comando MAQUINA_NUEVA.
-            Retorna el ID de máquina creada.
-        """
-        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
-        cursor = cnx.cursor()
-
-        insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
-        cursor.execute(insercion)
-        id_maquina_insertado = cursor.lastrowid
-
-        id_tipo_informe_inicio_sistema = self.get_tipo_informe('inicio_sistema')
-
-        insercion1 = ("INSERT INTO informes_x_maquina "
-                     "(id_maquina, id_tipo_informe) "
-                     "VALUES (%s, %s)")
-        cursor.execute(insercion1, (id_maquina_insertado, id_tipo_informe_inicio_sistema))
-        id_informe_insertado = cursor.lastrowid
-
-        # Agregar for componentes
-        ids_componentes = self.get_ids_componentes()
-        for id_componente in ids_componentes:
-            insercion = ("INSERT INTO componentes_x_informe "
-                         "(id_maquina, id_informe, id_componente) "
-                         "VALUES (%s, %s, %s)")
-            cursor.execute(insercion, (id_maquina_insertado, id_informe_insertado, id_componente))
-
-        cnx.commit()
-        cursor.close()
-        cnx.close()        
-        return id_maquina_insertado
 
     def get_componentes_informe(self, id_informe):
         """
@@ -297,6 +260,41 @@ class Connection(object):
             informes.append(id_informe[0])
         return informes
 
+    # COMANDOS
+
+    def maquina_nueva(self):
+        """
+            Método que ejecuta el comando MAQUINA_NUEVA.
+            Retorna el ID de máquina creada.
+        """
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+
+        insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
+        cursor.execute(insercion)
+        id_maquina_insertado = cursor.lastrowid
+
+        id_tipo_informe_inicio_sistema = self.get_tipo_informe('inicio_sistema')
+
+        insercion1 = ("INSERT INTO informes_x_maquina "
+                     "(id_maquina, id_tipo_informe) "
+                     "VALUES (%s, %s)")
+        cursor.execute(insercion1, (id_maquina_insertado, id_tipo_informe_inicio_sistema))
+        id_informe_insertado = cursor.lastrowid
+
+        # Agregar for componentes
+        ids_componentes = self.get_ids_componentes()
+        for id_componente in ids_componentes:
+            insercion = ("INSERT INTO componentes_x_informe "
+                         "(id_maquina, id_informe, id_componente) "
+                         "VALUES (%s, %s, %s)")
+            cursor.execute(insercion, (id_maquina_insertado, id_informe_insertado, id_componente))
+
+        cnx.commit()
+        cursor.close()
+        cnx.close()        
+        return id_maquina_insertado
+
     def inicio(self, id_maquina):
         """
             Método que ejecuta el comando INICIO.
@@ -304,6 +302,7 @@ class Connection(object):
         resultado = {}
         if self.id_maquina is not None:
             id_maquina = self.id_maquina
+        print (id_maquina)
 
         if id_maquina is not None:
             resultado["id"] = id_maquina
