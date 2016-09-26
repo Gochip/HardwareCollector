@@ -14,7 +14,9 @@ DEFAULT_PORT = 30330
 MAQUINA_NUEVA = 'maquina_nueva'  # Cliente -> Servidor
 MAQUINA_REGISTRADA = 'maquina_registrada'  # Servidor -> Cliente
 INICIO = 'inicio'  # Cliente -> Servidor
+INFORMAR = 'informar'  # Cliente -> Servidor
 CONFIGURAR = 'configurar'  # Servidor -> Cliente
+SOLICITAR = 'solicitar'  # Servidor -> Cliente
 
 SALIR = 'salir'
 

@@ -17,8 +17,11 @@ import os
 import os.path
 import mysql.connector
 import json
+import time
+import random
 from constants import *
 from subprocess import PIPE, Popen
+
 
 class Connection(object):
     """
@@ -36,6 +39,7 @@ class Connection(object):
         self.password = "12345678"
         self.db = "hc_bd"
         self.id_maquina = None
+        self.solicitudes = []
 
     def get_fileno(self):
         """
@@ -111,7 +115,6 @@ class Connection(object):
         Llena el búfer de salida con la respuesta.
         Retorna el código de estado.
         """
-        print(command)
         command_status = COMANDO_INVALIDO
         if True:
         #try:
@@ -138,6 +141,33 @@ class Connection(object):
                     command_status = OK
                 else:
                     command_status = ERROR
+            elif comando == INFORMAR:
+                datos = json_comando["datos"]
+                print(datos)
+                if datos is not None:
+                    try:
+                        id_solicitud = datos["id_solicitud"]
+                    except:
+                        id_solicitud = None
+
+                    try:
+                        id_informe = datos["id_informe"]
+                    except:
+                        id_informe = None
+
+                    modo = ""
+                    if id_solicitud is not None:
+                        modo = "activo"
+
+                    if id_informe is not None:
+                        modo = "pasivo"
+
+                    try:
+                        informacion = datos["informacion"]
+                        self.informar(modo, id_solicitud, id_informe, informacion)
+                        command_status = OK
+                    except KeyError:
+                        command_status = ERROR
         #except:
         #    print("Formato incorrecto de datos")
         self.output += json.dumps(resultado)
@@ -260,7 +290,21 @@ class Connection(object):
             informes.append(id_informe[0])
         return informes
 
-    # COMANDOS
+    # COMANDOS DE SALIDA
+
+    def solicitar(self, informacion_a_solicitar):
+        solicitud = Solicitud()
+        solicitud.informacion = informacion_a_solicitar
+        self.solicitudes.append(solicitud)
+
+        comando = {}
+        comando["comando"] = SOLICITAR
+        comando["datos"] = {}
+        comando["datos"]["id_solicitud"] = solicitud.get_id()
+        comando["datos"]["informacion"] = informacion_a_solicitar
+        return comando
+
+    # COMANDOS DE ENTRADA
 
     def maquina_nueva(self):
         """
@@ -320,6 +364,33 @@ class Connection(object):
                 configuracion["informes"].append(informe)
             resultado["configuracion"] = configuracion
         return resultado
+
+    def informar(self, modo, id_solicitud = None, id_informe = None, informacion = []):
+        if modo == "activo" and id_solicitud is not None:
+            # Modo activo: verificar que el id de solicitud esté en el bufer de
+            # solicitudes.
+            print ("ID SOLICITUD: ")
+            print (id_solicitud)
+            print ("ID INFORME: ")
+            print (id_informe)
+            print ("INFORMACIÓN: ")
+            print (informacion)
+        elif modo == "pasivo" and id_informe is not None:
+            # Modo pasivo: verificar que el id de informe sea el adecuado
+            # respecto a la información recibida.
+            pass
+        else:
+            pass
+
+class Solicitud():
+
+    def __init__(self):
+        # Genera un id único, tiene en cuenta el tiempo actual + un número aleatorio.
+        self._id = str(time.time()) + str(random.randint(1, 10000))
+        self.informacion = []
+
+    def get_id(self):
+        return self._id
 
 
 if __name__ == "__main__":
