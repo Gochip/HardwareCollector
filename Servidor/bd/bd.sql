@@ -43,7 +43,7 @@ CREATE TABLE caracteristicas_x_componentes_x_maquinas(
     id_maquina INT NOT NULL,
     id_componente INT NOT NULL,
     id_caracteristica INT NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
+    valor VARCHAR(300) NOT NULL,
     PRIMARY KEY(id_maquina, id_componente, id_caracteristica),
     FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_componente, id_maquina),
     FOREIGN KEY(id_componente, id_caracteristica) REFERENCES caracteristicas_x_componentes(id_caracteristica, id_componente)
