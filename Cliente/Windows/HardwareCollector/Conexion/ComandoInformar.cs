@@ -20,6 +20,7 @@ namespace HardwareCollector.Conexion
         {
             //opcional
             public string id_solicitud;
+            public string id_informe;
             //es un array asociativo donde la clave es el nombre del componente y el valor un json de atributos y valores del componente
             public List<ElementoInformacion> informacion;
             public Datos()
@@ -29,6 +30,7 @@ namespace HardwareCollector.Conexion
         }
 
         public abstract class ElementoInformacion {
+            public string componente;
         }
 
         public abstract class DatosInformacion
@@ -37,17 +39,28 @@ namespace HardwareCollector.Conexion
 
         public class ElementoProcesador: ElementoInformacion
         {
-            public DatosInformacion procesador = new DatosInformacionProcesador();
+            public ElementoProcesador() {
+                componente = "procesador";
+            }
+            public DatosInformacion datos = new DatosInformacionProcesador();
         }
 
         public class ElementoMemoria : ElementoInformacion
         {
-            public List<DatosInformacionMemoriasRam> memorias_ram = new List<DatosInformacionMemoriasRam>();
+            public ElementoMemoria()
+            {
+                componente = "memorias_ram";
+            }
+            public List<DatosInformacionMemoriasRam> datos = new List<DatosInformacionMemoriasRam>();
         }
 
         public class ElementoDiscoDuro : ElementoInformacion
         {
-            public List<DatosInformacionDiscosDuros> discos_duros = new List<DatosInformacionDiscosDuros>();
+            public ElementoDiscoDuro()
+            {
+                componente = "discos_duros";
+            }
+            public List<DatosInformacionDiscosDuros> datos = new List<DatosInformacionDiscosDuros>();
         }
 
         public class DatosInformacionProcesador : DatosInformacion {
