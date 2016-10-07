@@ -45,8 +45,8 @@ CREATE TABLE caracteristicas_x_componentes_x_maquinas(
     id_caracteristica INT NOT NULL,
     valor VARCHAR(300) NOT NULL,
     PRIMARY KEY(id_maquina, id_componente, id_caracteristica),
-    FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_componente, id_maquina),
-    FOREIGN KEY(id_componente, id_caracteristica) REFERENCES caracteristicas_x_componentes(id_caracteristica, id_componente)
+    FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_maquina, id_componente),
+    FOREIGN KEY(id_componente, id_caracteristica) REFERENCES caracteristicas_x_componentes(id_componente, id_caracteristica)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE tipos_informes(

@@ -290,6 +290,32 @@ class Connection(object):
             informes.append(id_informe[0])
         return informes
 
+    def get_id_caracteristica_x_componente(self, id_componente, nombre_caracteristica):
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = """
+                    SELECT cxc.id_caracteristica FROM caracteristicas_x_componentes AS cxc
+                    WHERE cxc.id_componente=%s AND cxc.nombre=%s
+                   """
+        cursor.execute(consulta, (id_componente, nombre_caracteristica))
+        id_caracteristica = None
+        for (caract) in cursor:
+            id_caracteristica = caract[0]
+        return id_caracteristica
+
+    def get_id_componente(self, nombre_componente):
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        consulta = """
+                    SELECT c.id FROM componentes AS c
+                    WHERE c.nombre=%s
+                   """
+        cursor.execute(consulta, (nombre_componente, ))
+        id_componente = None
+        for (comp) in cursor:
+            id_componente = comp[0]
+        return id_componente
+
     # COMANDOS DE SALIDA
 
     def solicitar(self, informacion_a_solicitar):
@@ -346,7 +372,8 @@ class Connection(object):
         resultado = {}
         if self.id_maquina is not None:
             id_maquina = self.id_maquina
-        print (id_maquina)
+        if self.id_maquina is None:
+            self.id_maquina = id_maquina
 
         if id_maquina is not None:
             resultado["id"] = id_maquina
@@ -375,6 +402,33 @@ class Connection(object):
             print (id_informe)
             print ("INFORMACIÓN: ")
             print (informacion)
+            cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+            cursor = cnx.cursor()
+            for info in informacion:
+                componente = info["componente"]
+                if componente == "procesador":
+                    datos = info["datos"]
+                    id_componente = self.get_id_componente(componente)
+                    
+                    insercion = ("INSERT INTO componentes_x_maquinas "
+                         "(id_componente, id_maquina) "
+                         "VALUES (%s, %s)")
+                    cursor.execute(insercion, (id_componente, self.id_maquina))
+                    cnx.commit()
+                    for clave, valor in datos.items():
+                        nombre_caracteristica = clave
+                        valor_caracteristica = valor
+                        id_caracteristica = self.get_id_caracteristica_x_componente(id_componente, nombre_caracteristica)
+
+                        insercion = ("INSERT INTO caracteristicas_x_componentes_x_maquinas "
+                                "(id_componente, id_maquina, id_caracteristica, valor) "
+                                "VALUES (%s, %s, %s, %s)")
+                        cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, valor_caracteristica))
+                        cnx.commit()
+                elif componente == "discos_duros":
+                    pass
+                elif componente == "memorias_ram":
+                    pass
         elif modo == "pasivo" and id_informe is not None:
             # Modo pasivo: verificar que el id de informe sea el adecuado
             # respecto a la información recibida.
