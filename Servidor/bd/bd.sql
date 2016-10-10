@@ -23,10 +23,11 @@ CREATE TABLE componentes(
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE componentes_x_maquinas(
+    id INT NOT NULL AUTO_INCREMENT,
     id_componente INT NOT NULL,
     id_maquina INT NOT NULL,
-    nombre VARCHAR(100),
-    PRIMARY KEY(id_componente, id_maquina),
+    nombre VARCHAR(100), /* usado para diferenciar una memoria ram de otra por ejemplo*/
+    PRIMARY KEY(id),
     FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
     FOREIGN KEY(id_componente) REFERENCES componentes(id)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
@@ -45,7 +46,7 @@ CREATE TABLE caracteristicas_x_componentes_x_maquinas(
     id_caracteristica INT NOT NULL,
     valor VARCHAR(300) NOT NULL,
     PRIMARY KEY(id_maquina, id_componente, id_caracteristica),
-    FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_maquina, id_componente),
+    -- FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_maquina, id_componente),
     FOREIGN KEY(id_componente, id_caracteristica) REFERENCES caracteristicas_x_componentes(id_componente, id_caracteristica)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
