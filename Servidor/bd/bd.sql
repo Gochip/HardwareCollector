@@ -33,21 +33,23 @@ CREATE TABLE componentes_x_maquinas(
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE caracteristicas_x_componentes(
-    id_caracteristica INT NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT,
     id_componente INT NOT NULL,
     nombre VARCHAR(100),
-    PRIMARY KEY(id_caracteristica, id_componente),
+    PRIMARY KEY(id),
     FOREIGN KEY(id_componente) REFERENCES componentes(id)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE caracteristicas_x_componentes_x_maquinas(
+    id INT NOT NULL AUTO_INCREMENT,
     id_maquina INT NOT NULL,
     id_componente INT NOT NULL,
     id_caracteristica INT NOT NULL,
     valor VARCHAR(300) NOT NULL,
-    PRIMARY KEY(id_maquina, id_componente, id_caracteristica),
-    -- FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_maquina, id_componente),
-    FOREIGN KEY(id_componente, id_caracteristica) REFERENCES caracteristicas_x_componentes(id_componente, id_caracteristica)
+    PRIMARY KEY(id),
+    FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
+    FOREIGN KEY(id_componente) REFERENCES componentes(id),
+    FOREIGN KEY(id_caracteristica) REFERENCES caracteristicas_x_componentes(id)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE tipos_informes(
@@ -68,12 +70,12 @@ CREATE TABLE informes_x_maquina(
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE componentes_x_informe(
+    id INT NOT NULL AUTO_INCREMENT,
     id_maquina INT NOT NULL,
     id_informe INT NOT NULL,
 	id_componente INT NOT NULL,
-    PRIMARY KEY(id_maquina, id_informe, id_componente),
+    PRIMARY KEY(id),
     FOREIGN KEY(id_informe) REFERENCES informes_x_maquina(id_informe)
-    -- FOREIGN KEY(id_componente, id_maquina) REFERENCES componentes_x_maquinas(id_componente, id_maquina)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 
