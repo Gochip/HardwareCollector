@@ -31,8 +31,7 @@ class ComandoInformar(Comando):
                 elementos['datos'] = datos_memorias
                 informacion.append(elementos)
         self.datos['informacion'] = informacion
-        print(self.__dict__)
-#        return json.dumps(self.__dict__)
+        return json.dumps(self.__dict__)
 
     class Datos:
         def __init__(self):

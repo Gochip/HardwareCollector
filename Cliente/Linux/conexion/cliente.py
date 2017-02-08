@@ -41,7 +41,6 @@ class Cliente:
         print("conectado")
         while True:
             mensaje = self.recibir()
-            print(mensaje)
             if(mensaje == "fin"):
                 break
         desconectar()
@@ -53,15 +52,15 @@ class Cliente:
         mensaje_bytes = (datos).encode('ascii')
         tamanio_mensaje_bytes = (str(len(mensaje_bytes))).encode('ascii')        
         print("DATOS ENVIADOS -> " + str(mensaje_bytes))
-        #tamanio_bytes_enviados = self._socket.send(tamanio_mensaje_bytes)        
-        #bytes_enviados = self._socket.send(mensaje_bytes)
+        tamanio_bytes_enviados = self._socket.send(tamanio_mensaje_bytes)        
+        bytes_enviados = self._socket.send(mensaje_bytes)
 
     def recibir(self):
         max_datos = 1024
-        #datos = self._socket.recv(max_datos)   #en bytes
-        #datos = b'{"comando": "maquina_registrada", "datos": {"id":"321"}}'
-        #datos = b'{"comando": "configurar", "datos": {"configuracion":{"servidor": {"ip": "127.0.0.1", "puerto": 30303}, "informes": [{"id": "prueba_cliente_linux", "informacion": ["procesador", "memorias_ram", "discos_duros"], "tipo": "programado", "hora": "2015-08-15 20:40:00"}]}}}'
-        datos = b'{"comando":"solicitar", "datos": {"id_solicitud":"121", "informacion":["procesador", "memorias_ram","discos_duros"]}}'
+        datos = self._socket.recv(max_datos)   #en bytes
+#        datos = b'{"comando": "maquina_registrada", "datos": {"id":"321"}}'
+#        datos = b'{"comando": "configurar", "datos": {"configuracion":{"servidor": {"ip": "127.0.0.1", "puerto": 30303}, "informes": [{"id": "prueba_cliente_linux", "informacion": ["procesador", "memorias_ram", "discos_duros"], "tipo": "programado", "hora": "2015-08-15 20:40:00"}]}}}'
+#        datos = b'{"comando":"solicitar", "datos": {"id_solicitud":"121", "informacion":["procesador", "memorias_ram","discos_duros"]}}'
         mensaje = datos.decode(encoding='ascii') #string
         return mensaje
 
@@ -82,7 +81,6 @@ class Cliente:
             elif (comando['comando'] == SOLICITAR):
                 cmd_recibido = ComandoSolicitar()
                 cmd_recibido = cmd_recibido.deserialize(mensaje_recibido)
-                print(type(cmd_recibido))
         except KeyError:
             print("COMANDO NO INDENTIFICADO")
         return cmd_recibido
