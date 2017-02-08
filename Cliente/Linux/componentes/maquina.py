@@ -46,6 +46,15 @@ class Maquina():
     def setprocesador(self, procesador):
         self.procesador = procesador
     
+    def getprocesador(self):
+        return self.procesador
+
+    def getmemoriasram(self):
+        return self.memorias_ram
+
+    def getdiscosduros(self):
+        return self.discos_duro
+
     def tostr(self):
         maquina = 'Nombre:' + self.nombre + '\n' + 'Fabricante:' + self.fabricante + '\n' + 'SistemaOperativo:' + self.sistema_operativo + '\n\n' + 'DiscosDuro:' + self.listardiscosduro() + '\n\n' + 'Procesador:' + self.procesador.tostr() + '\n\n' + 'MemoriasRam:' + self.listarmemoriasram()
         return maquina

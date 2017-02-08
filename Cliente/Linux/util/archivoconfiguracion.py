@@ -2,92 +2,96 @@ class ArchivoConfiguracion:
     """{id: “id del cliente”,
         configuracion: {servidor: {ip: "", puerto: int}, informes: [{id: “id del informe, decidido por el cliente e informado al servidor”, informacion: [“procesador”, “memorias_ram”, “discos_duros”, “otro_componente…”], tipo: “programado|inicio_sistema|inicio_sesion|apagado”, hora: “hora del informe programado”}]}}"""
     
-    def __init__(self, id, configuracion):
-        self._id = id
-        self._configuracion = configuracion
+    def __init__(self):
+        self.id = ""
+        self.configuracion = None
 
     def setid(self, id):
-        self._id = id
+        self.id = id
 
     def setconfiguracion(self, configuracion):
-        self._configuracion = configuracion
+        self.configuracion = configuracion
     
     def getid(self):
-        return self._id
+        return self.id
 
     def getconfiguracion(self):
-        return self._configuracion
-
+        return self.configuracion
+    
+    def posee_id(self):
+        if len(self.id) > 0:
+            return True
+        return False
 
 class Configuracion:
 
     def __init__(self):
-        self._informes = []
-        self._servidor = None
+        self.informes = []
+        self.servidor = None
 
     def setinformes(self, informes):
-        self._informes = informes
+        self.informes = informes
 
     def setservidor(self, servidor):
-        self._servidor = servidor
+        self.servidor = servidor
     
     def getinformes(self):
-        return self._informes
+        return self.informes
 
     def getservidor(self):
-        return self._servidor
+        return self.servidor
     
     def add_informe(self, informe):
-        self._informes.append(informe)
+        self.informes.append(informe)
 
 
 class Servidor:
 
     def __init__(self, ip, puerto):
-        self._ip = ip
-        self._puerto = puerto
+        self.ip = ip
+        self.puerto = puerto
 
     def setip(self, ip):
-        self._ip = ip
+        self.ip = ip
     
     def setpuerto(self, puerto):
-        self._puerto = puerto
+        self.puerto = puerto
 
     def getip(self):
-        return self._ip
+        return self.ip
     
     def getpuerto(self):
-        return self._puerto
+        return self.puerto
 
 
 class Informe:
 
     def __init__(self, id, informacion, tipo, hora):
-        self._id = id
-        self._informacion = informacion
-        self._tipo = tipo
-        self._hora = hora
+        self.id = id
+        self.informacion = informacion
+        self.tipo = tipo
+        self.hora = hora
 
     def setid(self, id):
-        self._id = id
+        self.id = id
 
     def setinformacion(self, informacion):
-        self._informacion = informacion
+        self.informacion = informacion
 
     def settipo(self, tipo):
-        self._tipo = tipo
+        self.tipo = tipo
 
     def sethora(self, hora):
-        self._hora = hora
+        self.hora = hora
 
     def getid(self):
-        return self._id
+        return self.id
 
     def getinfomacion(self):
-        return self._informacion
+        return self.informacion
 
     def gettipo(self):
-        return self._tipo
+        return self.tipo
 
     def gethora(self):
-        return self._hora
+        return self.hora

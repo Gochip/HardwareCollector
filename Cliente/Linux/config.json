@@ -1,1 +1,1 @@
-{"id":"cliente1","configuracion":{"servidor": {"ip":"127.0.0.1", "puerto":"65000"}, "informes": [{"id":"id_informe", "informacion":["procesador", "memorias_ram", "discos_duros"], "tipo":"programado", "hora":"17:02"}]}}
+{"id":"321","configuracion":{"servidor":{"puerto": 30330, "ip": "127.0.0.1"},"informes":[]}}

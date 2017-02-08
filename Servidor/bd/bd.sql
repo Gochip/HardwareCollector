@@ -1,3 +1,7 @@
+/*
+	Agrego tablas para informes
+*/
+
 DROP DATABASE IF EXISTS hc_bd;
 CREATE DATABASE hc_bd;
 USE hc_bd;
@@ -19,30 +23,59 @@ CREATE TABLE componentes(
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE componentes_x_maquinas(
+    id INT NOT NULL AUTO_INCREMENT,
     id_componente INT NOT NULL,
     id_maquina INT NOT NULL,
-    nombre VARCHAR(100),
-    PRIMARY KEY(id_componente, id_maquina),
+    nombre VARCHAR(100), /* usado para diferenciar una memoria ram de otra por ejemplo*/
+    PRIMARY KEY(id),
     FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
     FOREIGN KEY(id_componente) REFERENCES componentes(id)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE caracteristicas_x_componentes(
-    id_caracteristica INT NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT,
     id_componente INT NOT NULL,
     nombre VARCHAR(100),
-    PRIMARY KEY(id_caracteristica, id_componente),
+    PRIMARY KEY(id),
     FOREIGN KEY(id_componente) REFERENCES componentes(id)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 CREATE TABLE caracteristicas_x_componentes_x_maquinas(
+    id INT NOT NULL AUTO_INCREMENT,
     id_maquina INT NOT NULL,
     id_componente INT NOT NULL,
     id_caracteristica INT NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    PRIMARY KEY(id_maquina, id_componente, id_caracteristica),
-    FOREIGN KEY(id_maquina, id_componente) REFERENCES componentes_x_maquinas(id_componente, id_maquina),
-    FOREIGN KEY(id_componente, id_caracteristicas) REFERENCES caracteristicas_x_componentes(id_caracteristica, id_componente)
+    valor VARCHAR(300) NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
+    FOREIGN KEY(id_componente) REFERENCES componentes(id),
+    FOREIGN KEY(id_caracteristica) REFERENCES caracteristicas_x_componentes(id)
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE tipos_informes(
+    id INT NOT NULL AUTO_INCREMENT,
+	nombre VARCHAR(100) NOT NULL,
+    PRIMARY KEY(id)
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE informes_x_maquina(
+    id_informe INT NOT NULL AUTO_INCREMENT,
+    id_maquina INT NOT NULL,
+    id_tipo_informe INT NOT NULL,
+    hora_informe_programado TIME NULL, -- Es distintio de null unicamente para reportes informes programados
+    PRIMARY KEY(id_informe),
+    UNIQUE(id_maquina, id_tipo_informe),
+    FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
+    FOREIGN KEY(id_tipo_informe) REFERENCES tipos_informes(id)
+)ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+CREATE TABLE componentes_x_informe(
+    id INT NOT NULL AUTO_INCREMENT,
+    id_maquina INT NOT NULL,
+    id_informe INT NOT NULL,
+	id_componente INT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(id_informe) REFERENCES informes_x_maquina(id_informe)
 )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 
@@ -86,4 +119,16 @@ INSERT INTO caracteristicas_x_componentes (id_componente, nombre) VALUES (@id_me
 INSERT INTO caracteristicas_x_componentes (id_componente, nombre) VALUES (@id_memoria_ram,'tamanio_bus_datos'); -- Bits
 INSERT INTO caracteristicas_x_componentes (id_componente, nombre) VALUES (@id_memoria_ram,'velocidad'); -- MHz
 INSERT INTO caracteristicas_x_componentes (id_componente, nombre) VALUES (@id_memoria_ram,'tamanio'); -- Bytes
+
+-- Tipos de infomes
+
+INSERT INTO tipos_informes (nombre) VALUES ('programado');
+INSERT INTO tipos_informes (nombre) VALUES ('inicio_sistema');
+INSERT INTO tipos_informes (nombre) VALUES ('inicio_sesion');
+INSERT INTO tipos_informes (nombre) VALUES ('apagado');
+
+SET @id_informe_programado = (SELECT id FROM tipos_informes WHERE nombre='programado');
+SET @id_informe_inicio_sistema = (SELECT id FROM tipos_informes WHERE nombre='inicio_sistema');
+SET @id_informe_inicio_sesion = (SELECT id FROM tipos_informes WHERE nombre='inicio_sesion');
+SET @id_informe_apagado = (SELECT id FROM tipos_informes WHERE nombre='apagado');
 

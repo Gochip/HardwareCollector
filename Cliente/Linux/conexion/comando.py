@@ -1,15 +1,15 @@
 import json
 
 class Comando:
-    CARACTER_FIN_COMANDO = "<EOF>"
+    CARACTER_FIN_COMANDO = "\n"
 
     def __init__(self, comando):
-        self._comando = comando
+        self.comando = comando
 
-    def serialize():
-        return json.dump(vars(self))
+    def serialize(self):
+        return json.dumps((self.__dict__))
     
-    def deserialize(json):
+    def deserialize(self, json):
         return None
 
     

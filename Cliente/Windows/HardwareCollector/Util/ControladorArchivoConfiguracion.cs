@@ -30,5 +30,15 @@ namespace HardwareCollector.Util
         public static ArchivoConfiguracion LeerArchivo() {
            return new JavaScriptSerializer().Deserialize<ArchivoConfiguracion>(ControladorArchivoConfiguracion.LeerArchivoComoTexto());
         }
+
+        public static bool PoseeIpValida(ArchivoConfiguracion archivo)
+        {
+            return (archivo != null && archivo.configuracion != null && archivo.configuracion.servidor != null && archivo.configuracion.servidor.ip != null && !archivo.configuracion.servidor.ip.Equals(""));
+        }
+
+        public static bool PoseePuertoValido(ArchivoConfiguracion archivo)
+        {
+            return (archivo.configuracion != null && archivo.configuracion.servidor != null  && archivo.configuracion.servidor.puerto != 0);
+        }
     }
 }

@@ -3,7 +3,7 @@ class MemoriaRam():
         
     def __init__(self):        
         self.banco = ""
-        self.tecnologia = "" #EPROM, VRAM
+        self.tecnologias = "" #EPROM, VRAM
         self.fabricante = ""        
         self.numero_serie = ""
         self.tamanio_bus_datos = ""
@@ -36,8 +36,8 @@ class MemoriaRam():
         
     def settecnologia(self, tecnologia):
         """EPROM, VRAM"""
-        self.tecnologia = tecnologia
+        self.tecnologias = tecnologia
     
     def tostr(self):        
-        memoria = 'Banco:'+ self.banco + '\n' +'Fabricante:'+self.fabricante+ '\n'+'Tamanio:'+ self.tamanio + '\n' + 'NumeroDeSerie:'+ self.numero_serie+'\n'+'TamanioBusDatos:'+ self.tamanio_bus_datos + '\n' + 'Velocidad:'+ self.velocidad+'\n'+'Tecnologia:'+ self.tecnologia
+        memoria = 'Banco:'+ self.banco + '\n' +'Fabricante:'+self.fabricante+ '\n'+'Tamanio:'+ self.tamanio + '\n' + 'NumeroDeSerie:'+ self.numero_serie+'\n'+'TamanioBusDatos:'+ self.tamanio_bus_datos + '\n' + 'Velocidad:'+ self.velocidad+'\n'+'Tecnologia:'+ self.tecnologias
         return memoria    

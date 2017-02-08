@@ -1,20 +1,21 @@
-import comando.Comando as Comando
+from conexion.comando import Comando
 import json
 
-class ComandoMaquinaRegistrada(Comando):
+class ComandoReportar(Comando):
     
     def __init__(self):
         super().__init__("reportar")
+        self._datos = None
     
     class Datos:
         def __init__(self):
-            self._id_solicitar = ""
+            self._id_solicitud = ""
 
-        def set_id_solicitar(self, solicitar):
-            self._id_solicitar = solicitar
+        def set_id_solicitar(self, solicitud):
+            self._id_solicitud = solicitud
 
-        def get_id_solicitar():
-            return self._id_soliciar
+        def get_id_solicitud(self):
+            return self._id_solicitud
     
     def deserealize(string_json):
         comando = json.loads(string_json)

@@ -38,7 +38,7 @@ class Collector():
                         memoria.settamanio(self.limpiar_string(dato.split(': ')[1]))
                     elif(dato.startswith('Form Factor:')):
                         memoria.settecnologia(self.limpiar_string(dato.split(': ')[1]))
-                memorias.append(memoria)                                       
+                memorias.append(memoria)                              
         return memorias
     
     def get_discosduro(self):
