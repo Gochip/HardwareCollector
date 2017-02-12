@@ -5,7 +5,7 @@ import json
 class ComandoInformar(Comando):
     
     def __init__(self):
-        super().__init__("informar")
+        super().__init__(INFORMAR)
         self.datos = ComandoInformar.Datos()
 
     def set_datos(self, datos):

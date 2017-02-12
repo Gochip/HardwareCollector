@@ -2,9 +2,9 @@
 #encoding: UTF-8
 
 if __name__ == "__main__":
-    from pprint import pprint
     import recoleccion.collector as collector
     from util.controladorarchivoconfiguracion import ControladorArchivoConfiguracion
+    from util.excepciones import *
     from constantes import *
     from conexion.cliente import Cliente
     from conexion.comando import Comando
@@ -22,7 +22,7 @@ try:
         cliente = Cliente()
         cliente.set_ip_servidor(archivo.getconfiguracion().getservidor().getip())
         cliente.set_puerto(archivo.getconfiguracion().getservidor().getpuerto())            
-        cliente.conectar() #cliente inicia socket con servidor. DESCOMENTAR
+        #cliente.conectar() #cliente inicia socket con servidor. DESCOMENTAR
         if (not archivo.posee_id()):
             #enviar comando máquina nueva, recibir id, actualizar archivo
             cmd_maquina_nueva = ComandoMaquinaNueva()
@@ -98,4 +98,10 @@ try:
         #termina
         print("No existe el archivo de configuracion, no es posible hallar el servidor")
 except ConnectionRefusedError:
-    print("CONEXIÓN RECHAZADA")
+    print("\nCONEXIÓN RECHAZADA")
+except ExcepcionSubprocess:
+    print("\nOps, no se consiguieron datos del procesador ni las memorias. Sugerencias:\nNECSITA PERMISOS DE SUPERUSUARIO\nNO TIENE INSTALADO DMIDECODE")
+except ExcepcionFileIO as e:
+    print(e._url + '--> ' +e._mensaje )
+except KeyboardInterrupt:
+    print("\nCHAU")

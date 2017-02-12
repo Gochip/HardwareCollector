@@ -1,0 +1,6 @@
+Archivo /proc/cpuinfo
+
+/proc/cpuinfo es un corto archivo en texto plano, solo de lectura que contiene información sobre los CPUs en una computadora. No necesita permisos de super usuario para ser leido.
+    Si un computadora contiene 2 o mas CPUs, la información sobre cada una esta separada por un espacio en blanco. Esta información consiste en una palabra clave seguida por un separador (espacio, un punto y coma, y otro espacio) y luego un valor. Cada palabra clave es una combinación alfanumerica, guion bajo y caracteres de espacio.
+    Solo algunas lineas contienen información importante para la mayoría de los usurios. Como por ejemplo processor, vendor_id (cuyo valor es GenuineIntel en el caso de que sea un procesador Intel) y fpu (si su valor es yes siginifica que el procesador contiene una unidad de punto flotante).
+    El campo flags muestra cuales son las características disponiblesen la CPU; esta información es solo interesante para aquellos usuarios con un profundo conocimiento de procesadores. EL item final, bogomips, es una medida específica de linux de la velocidad de los CPUs en MIPS (millones de instrucciones por segundo) mientras no se realizé ningún trabajo actualmente; es solo usada para propositos de testing.

@@ -1,6 +1,7 @@
 MAQUINA_REGISTRADA = "maquina_registrada"
 CONFIGURAR = "configurar"
 SOLICITAR = "solicitar"
+INFORMAR = "informar"
 
 #Componentes
 PROCESADOR = "procesador"
