@@ -22,7 +22,7 @@ try:
         cliente = Cliente()
         cliente.set_ip_servidor(archivo.getconfiguracion().getservidor().getip())
         cliente.set_puerto(archivo.getconfiguracion().getservidor().getpuerto())            
-        #cliente.conectar() #cliente inicia socket con servidor. DESCOMENTAR
+        cliente.conectar() #cliente inicia socket con servidor. DESCOMENTAR
         if (not archivo.posee_id()):
             #enviar comando máquina nueva, recibir id, actualizar archivo
             cmd_maquina_nueva = ComandoMaquinaNueva()
