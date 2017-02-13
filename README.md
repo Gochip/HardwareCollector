@@ -11,6 +11,7 @@ https://github.com/dsbarrionuevo/isaai
 Desarrollado en Python2.7 y se encuentra en el directorio Servidor/Python.
 
 Para ejecutarlo (Linux Ubuntu):
+
 1. Instalar mysql server con el comando apt-get install mysql-server.
 2. Instalación del driver de mysql para Python (se necesita tener instalado pip):
   2.1. echo "https://dev.mysql.com/get/Downloads/Connector-Python/mysql-connector-python-2.2.2.tar.gz" >> requirements.txt.
