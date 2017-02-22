@@ -36,7 +36,7 @@ class Server(object):
             while True:
                 events = poll.poll()
                 for (fileno, event) in events:
-                    #try:
+                    try:
                         if event & select.POLLIN:
                             if fileno == self.socket.fileno():
                                 (client, address) = self.socket.accept()
@@ -58,8 +58,9 @@ class Server(object):
                             if con.is_closed():
                                 poll.unregister(con.get_fileno())
                                 con.close()
-                    #except Exception:
-                    #    print "Se desconectó un cliente"
+                    except Exception as ex:
+                        print ex
+                        print "Se desconectó un cliente"
         except KeyboardInterrupt or socket.error:
             print "\nCerrando server"
             self.socket.close()

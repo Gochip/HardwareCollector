@@ -82,13 +82,13 @@ CREATE TABLE componentes_x_informe(
 
 -- Componentes
 
-INSERT INTO componentes (nombre) VALUES ('disco');
+INSERT INTO componentes (nombre) VALUES ('discos_duros');
 INSERT INTO componentes (nombre) VALUES ('procesador');
-INSERT INTO componentes (nombre) VALUES ('memoria_ram');
+INSERT INTO componentes (nombre) VALUES ('memorias_ram');
 
-SET @id_disco = (SELECT id FROM componentes WHERE nombre='disco');
+SET @id_disco = (SELECT id FROM componentes WHERE nombre='discos_duros');
 SET @id_procesador = (SELECT id FROM componentes WHERE nombre='procesador');
-SET @id_memoria_ram = (SELECT id FROM componentes WHERE nombre='memoria_ram');
+SET @id_memoria_ram = (SELECT id FROM componentes WHERE nombre='memorias_ram');
 
 
 -- Características

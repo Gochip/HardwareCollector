@@ -132,7 +132,7 @@ class Connection(object):
             elif comando == INICIO:
                 datos = json_comando["datos"]
                 if datos is not None:
-                    id_maquina = datos["id"]
+                    '''id_maquina = datos["id"]
                     resultado = {}
                     respuesta = self.inicio(id_maquina)
                     resultado["comando"] = CONFIGURAR
@@ -144,7 +144,7 @@ class Connection(object):
                     resultado = {}
                     resultado = self.solicitar(["procesador","discos_duros", "memorias_ram"])
                     print("SOLICITAR")
-                    '''
+
                     command_status = OK
                 else:
                     command_status = ERROR
@@ -323,6 +323,15 @@ class Connection(object):
             id_componente = comp[0]
         return id_componente
 
+    def actualizar_fecha_sincronizacion(self, id_maquina):
+        # UPDATE maquinas SET fecha_sincronizacion=NOW() WHERE id=%s
+        cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
+        cursor = cnx.cursor()
+        actualizacion = """
+                        UPDATE maquinas SET fecha_sincronizacion=NOW() WHERE id=%s
+                       """
+        cursor.execute(actualizacion, (id_maquina,))
+
     # COMANDOS DE SALIDA
 
     def solicitar(self, informacion_a_solicitar):
@@ -347,7 +356,7 @@ class Connection(object):
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
 
-        insercion = "INSERT INTO maquinas (fecha_alta) VALUES (NOW())"
+        insercion = "INSERT INTO maquinas (fecha_alta, fecha_sincronizacion) VALUES (NOW(), NOW())"
         cursor.execute(insercion)
         id_maquina_insertado = cursor.lastrowid
 
@@ -413,9 +422,18 @@ class Connection(object):
             cursor = cnx.cursor()
             for info in informacion:
                 componente = info["componente"]
+                id_componente = self.get_id_componente(componente)
+
+                borrado_componentes_x_maquinas = ("DELETE FROM componentes_x_maquinas WHERE id_maquina=%s AND id_componente=%s")
+                cursor.execute(borrado_componentes_x_maquinas, (self.id_maquina, id_componente))
+
+                borrado_caracteristicas_x_componentes_x_maquinas = ("DELETE FROM caracteristicas_x_componentes_x_maquinas WHERE id_maquina=%s AND id_componente=%s")
+                cursor.execute(borrado_caracteristicas_x_componentes_x_maquinas, (self.id_maquina, id_componente))
+
                 if componente == "procesador":
+                    # Elimino todos los procesador de una maquina.
                     datos = info["datos"]
-                    id_componente = self.get_id_componente(componente)
+                    
                     # 1) Verifico si existe el componente en la tabla "componentes_x_maquinas" dados 
                     # el id_componente y el self.id_maquina
                     # 1.1) Si existe no inserto nada en "componentes_x_maquinas" pero 
@@ -441,36 +459,31 @@ class Connection(object):
                                 "VALUES (%s, %s, %s, %s, %s)")
                         cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, 1, valor_caracteristica))
                         cnx.commit()
-                elif componente == "discos_duros":
-                    pass
-                    '''
+                    self.actualizar_fecha_sincronizacion(self.id_maquina)
+                elif componente == "discos_duros" or componente == "memorias_ram":
                     # Pseudocodigo:
                     # El procedimiento es igual al caso del procesador, solo que debo considerar que en
                     # datos es un arreglo indexado de arreglos asociativos, como ser
                     # datos = [{clave:valor},{clave:valor}]
                     datos = info["datos"]
-                    id_componente = self.get_id_componente(componente)
-                    index = 0
-                    for dato in datos
-                        index++
+                    posicion = 1
+                    for dato in datos:
                         insercion = ("INSERT INTO componentes_x_maquinas "
                              "(id_componente, id_maquina, posicion) "
                              "VALUES (%s, %s, %s)")
-                        cursor.execute(insercion, (id_componente, self.id_maquina, index))
+                        cursor.execute(insercion, (id_componente, self.id_maquina, posicion))
                         cnx.commit()
-                        for clave, valor in disco.items():
+                        for clave, valor in dato.items():
                             nombre_caracteristica = clave
                             valor_caracteristica = valor
                             id_caracteristica = self.get_id_caracteristica_x_componente(id_componente, nombre_caracteristica)
 
                             insercion = ("INSERT INTO caracteristicas_x_componentes_x_maquinas "
                                     "(id_componente, id_maquina, id_caracteristica, posicion, valor) "
-                                    "VALUES (%s, %s, %s, %s)")
-                            cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, index, valor_caracteristica))
+                                    "VALUES (%s, %s, %s, %s, %s)")
+                            cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, posicion, valor_caracteristica))
                             cnx.commit()
-                    '''
-                elif componente == "memorias_ram":
-                    pass
+                        posicion += 1
         elif modo == "pasivo" and id_informe is not None:
             # Modo pasivo: verificar que el id de informe sea el adecuado
             # respecto a la información recibida.
