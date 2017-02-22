@@ -132,7 +132,7 @@ class Connection(object):
             elif comando == INICIO:
                 datos = json_comando["datos"]
                 if datos is not None:
-                    '''id_maquina = datos["id"]
+                    id_maquina = datos["id"]
                     resultado = {}
                     respuesta = self.inicio(id_maquina)
                     resultado["comando"] = CONFIGURAR
@@ -144,7 +144,7 @@ class Connection(object):
                     resultado = {}
                     resultado = self.solicitar(["procesador","discos_duros", "memorias_ram"])
                     print("SOLICITAR")
-
+                    '''
                     command_status = OK
                 else:
                     command_status = ERROR
