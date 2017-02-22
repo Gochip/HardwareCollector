@@ -324,13 +324,13 @@ class Connection(object):
         return id_componente
 
     def actualizar_fecha_sincronizacion(self, id_maquina):
-        # UPDATE maquinas SET fecha_sincronizacion=NOW() WHERE id=%s
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
         actualizacion = """
                         UPDATE maquinas SET fecha_sincronizacion=NOW() WHERE id=%s
                        """
         cursor.execute(actualizacion, (id_maquina,))
+        cnx.commit()
 
     # COMANDOS DE SALIDA
 
