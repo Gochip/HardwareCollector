@@ -24,9 +24,9 @@ CREATE TABLE componentes(
 
 CREATE TABLE componentes_x_maquinas(
     id INT NOT NULL AUTO_INCREMENT,
-    id_componente INT NOT NULL,
     id_maquina INT NOT NULL,
-    nombre VARCHAR(100), /* usado para diferenciar una memoria ram de otra por ejemplo*/
+    id_componente INT NOT NULL,
+    posicion INT NOT NULL, /* usado para diferenciar una memoria ram de otra por ejemplo*/
     PRIMARY KEY(id),
     FOREIGN KEY(id_maquina) REFERENCES maquinas(id),
     FOREIGN KEY(id_componente) REFERENCES componentes(id)
@@ -44,6 +44,7 @@ CREATE TABLE caracteristicas_x_componentes_x_maquinas(
     id INT NOT NULL AUTO_INCREMENT,
     id_maquina INT NOT NULL,
     id_componente INT NOT NULL,
+    posicion INT NOT NULL, /* debe ser usado para referencia la tabla componentes_x_maquinas */
     id_caracteristica INT NOT NULL,
     valor VARCHAR(300) NOT NULL,
     PRIMARY KEY(id),

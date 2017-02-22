@@ -138,6 +138,13 @@ class Connection(object):
                     resultado["comando"] = CONFIGURAR
                     resultado["datos"] = {"configuracion": respuesta}
                     print("MAQUINA INICIADA")
+                    '''
+                    # Ejemplo de solicitud de datos tras recibir un comando inicio
+                    self.id_maquina = datos["id"]
+                    resultado = {}
+                    resultado = self.solicitar(["procesador","discos_duros", "memorias_ram"])
+                    print("SOLICITAR")
+                    '''
                     command_status = OK
                 else:
                     command_status = ERROR
@@ -294,7 +301,7 @@ class Connection(object):
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
         consulta = """
-                    SELECT cxc.id_caracteristica FROM caracteristicas_x_componentes AS cxc
+                    SELECT cxc.id FROM caracteristicas_x_componentes AS cxc
                     WHERE cxc.id_componente=%s AND cxc.nombre=%s
                    """
         cursor.execute(consulta, (id_componente, nombre_caracteristica))
@@ -385,7 +392,7 @@ class Connection(object):
                 informe = {}
                 informe["id"] = id_informe
                 informe["informacion"] = componentes
-                #informe["tipo"] = tipo
+                informe["tipo"] = 'inicio_sistema'
                 #if tipo == "programado":
                 #    informe["hora"] = "12:00"
                 configuracion["informes"].append(informe)
@@ -393,9 +400,9 @@ class Connection(object):
         return resultado
 
     def informar(self, modo, id_solicitud = None, id_informe = None, informacion = []):
+        # Siempre debo actualizar la columna "fecha_sincronizacion" de la tabla maquinas.
         if modo == "activo" and id_solicitud is not None:
-            # Modo activo: verificar que el id de solicitud esté en el bufer de
-            # solicitudes.
+            # Modo activo: verificar que el id de solicitud esté en el bufer de solicitudes.
             print ("ID SOLICITUD: ")
             print (id_solicitud)
             print ("ID INFORME: ")
@@ -409,11 +416,20 @@ class Connection(object):
                 if componente == "procesador":
                     datos = info["datos"]
                     id_componente = self.get_id_componente(componente)
-                    
+                    # 1) Verifico si existe el componente en la tabla "componentes_x_maquinas" dados 
+                    # el id_componente y el self.id_maquina
+                    # 1.1) Si existe no inserto nada en "componentes_x_maquinas" pero 
+                    # actualizo "caracteristicas_x_componentes_x_maquinas" con los valores recibidos del procesador y 
+                    # con (id_componente, id_maquina, id_caracteristica, 1, valor), uso 1 como posicion.
+
+                    # 1.2) Si no existe, inserto en "componentes_x_maquinas" y tambien en "caracteristicas_x_componentes_x_maquinas"
+                    # con los valores recibidos y con (id_componente, id_maquina, id_caracteristica, 1, valor), uso 1 como posicion.
+
                     insercion = ("INSERT INTO componentes_x_maquinas "
-                         "(id_componente, id_maquina) "
-                         "VALUES (%s, %s)")
-                    cursor.execute(insercion, (id_componente, self.id_maquina))
+                         "(id_componente, id_maquina, posicion) "
+                         "VALUES (%s, %s, %s)")
+                    # Columna posicion se usa para distinguir entre muchos componentes de la misma maquina del mismo tipo (como ser memorias ram)
+                    cursor.execute(insercion, (id_componente, self.id_maquina, 1))
                     cnx.commit()
                     for clave, valor in datos.items():
                         nombre_caracteristica = clave
@@ -421,12 +437,38 @@ class Connection(object):
                         id_caracteristica = self.get_id_caracteristica_x_componente(id_componente, nombre_caracteristica)
 
                         insercion = ("INSERT INTO caracteristicas_x_componentes_x_maquinas "
-                                "(id_componente, id_maquina, id_caracteristica, valor) "
-                                "VALUES (%s, %s, %s, %s)")
-                        cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, valor_caracteristica))
+                                "(id_componente, id_maquina, id_caracteristica, posicion, valor) "
+                                "VALUES (%s, %s, %s, %s, %s)")
+                        cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, 1, valor_caracteristica))
                         cnx.commit()
                 elif componente == "discos_duros":
                     pass
+                    '''
+                    # Pseudocodigo:
+                    # El procedimiento es igual al caso del procesador, solo que debo considerar que en
+                    # datos es un arreglo indexado de arreglos asociativos, como ser
+                    # datos = [{clave:valor},{clave:valor}]
+                    datos = info["datos"]
+                    id_componente = self.get_id_componente(componente)
+                    index = 0
+                    for dato in datos
+                        index++
+                        insercion = ("INSERT INTO componentes_x_maquinas "
+                             "(id_componente, id_maquina, posicion) "
+                             "VALUES (%s, %s, %s)")
+                        cursor.execute(insercion, (id_componente, self.id_maquina, index))
+                        cnx.commit()
+                        for clave, valor in disco.items():
+                            nombre_caracteristica = clave
+                            valor_caracteristica = valor
+                            id_caracteristica = self.get_id_caracteristica_x_componente(id_componente, nombre_caracteristica)
+
+                            insercion = ("INSERT INTO caracteristicas_x_componentes_x_maquinas "
+                                    "(id_componente, id_maquina, id_caracteristica, posicion, valor) "
+                                    "VALUES (%s, %s, %s, %s)")
+                            cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, index, valor_caracteristica))
+                            cnx.commit()
+                    '''
                 elif componente == "memorias_ram":
                     pass
         elif modo == "pasivo" and id_informe is not None:
