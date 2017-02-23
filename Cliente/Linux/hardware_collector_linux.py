@@ -5,7 +5,7 @@ if __name__ == "__main__":
     import recoleccion.collector as collector
     from util.controladorarchivoconfiguracion import ControladorArchivoConfiguracion
     from util.excepciones import *
-    from constantes import *
+    from util.constantes import *
     from conexion.cliente import Cliente
     from conexion.comando import Comando
     from conexion.comando_configurar import ComandoConfigurar
@@ -15,8 +15,14 @@ if __name__ == "__main__":
     from conexion.comando_maquina_registrada import ComandoMaquinaRegistrada
     from conexion.comando_reportar import ComandoReportar
     from conexion.comando_solicitar import ComandoSolicitar
+    import os
 
 try:
+    pid = os.getpid()
+    op = open(PIDAPP,"w")
+    op.write("%s" % pid)
+    op.close()
+    
     if (ControladorArchivoConfiguracion.existe_archivo()):
         archivo = ControladorArchivoConfiguracion.leer_archivo()        
         cliente = Cliente()
@@ -103,5 +109,7 @@ except ExcepcionSubprocess:
     print("\nOps, no se consiguieron datos del procesador ni las memorias. Sugerencias:\nNECSITA PERMISOS DE SUPERUSUARIO\nNO TIENE INSTALADO DMIDECODE")
 except ExcepcionFileIO as e:
     print(e._url + '--> ' +e._mensaje )
+except PermissionError:
+    print("Necesita permisos de superusuario")
 except KeyboardInterrupt:
     print("\nCHAU")

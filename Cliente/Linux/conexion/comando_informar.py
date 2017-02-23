@@ -1,5 +1,5 @@
 from conexion.comando import Comando
-from constantes import *
+from util.constantes import *
 import json
 
 class ComandoInformar(Comando):

@@ -7,3 +7,6 @@ INFORMAR = "informar"
 PROCESADOR = "procesador"
 MEMORIAS_RAM = "memorias_ram"
 DISCOS_DUROS = "discos_duros"
+
+#Proceso
+PIDAPP="/var/hcl.pid"
