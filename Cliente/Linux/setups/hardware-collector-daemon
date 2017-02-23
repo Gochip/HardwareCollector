@@ -1,0 +1,17 @@
+#!/bin/sh
+PATHAPP="/usr/share/hardware-collector-linux/hardware_collector_linux.py" #se ejecuta en background
+PIDAPP="/var/hcl.pid"
+case $1 in
+        start)
+                echo 'starting - iniciando'
+                $(start-stop-daemon --start --background --pidfile $PIDAPP --make-pidfile --exec $PATHAPP)
+                echo 'started - iniciado'
+        ;;
+        stop)
+                echo 'stoping - deteniendo'
+                echo $(cat $PIDAPP)
+                PID=`cat $PIDAPP`
+                kill -9 $PID
+                echo 'stopped - detenido'
+        ;;
+esac
