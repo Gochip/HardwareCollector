@@ -94,8 +94,8 @@ def main():
 
         server = Server(options.address, port)
         t1 = threading.Thread(target=server.serve)
+        t1.daemon = True
         t1.start()
-        print "OK"
         
         server_address = './hc'
         try:
