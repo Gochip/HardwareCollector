@@ -1,0 +1,13 @@
+Hardware Collector, Cliente Linux. Versión 1.0
+Laboratorio de Sistemas - UTN FRC
+-------------------------------------
+1- Verificar que se tenga instalado dmidecode.
+2- Verificar que en el sistema tenga los siguientes módulos de python instalados, 
+de lo contrario instalarlos:
+    platform
+    subprocess
+    ipaddress
+    socket
+    json
+-------------------------------------
+3- Ejecutarlo como superusuario

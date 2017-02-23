@@ -8,7 +8,7 @@ from conexion.comando_maquina_nueva import ComandoMaquinaNueva
 from conexion.comando_maquina_registrada import ComandoMaquinaRegistrada
 from conexion.comando_reportar import ComandoReportar
 from conexion.comando_solicitar import ComandoSolicitar
-from constantes import *
+from util.constantes import *
 import json
 
 class Cliente:
@@ -51,7 +51,7 @@ class Cliente:
     def enviar(self, datos):
         mensaje_bytes = (datos).encode('ascii')
         tamanio_mensaje_bytes = (str(len(mensaje_bytes))).encode('ascii')        
-        print("DATOS ENVIADOS -> " + str(mensaje_bytes))
+        #print("DATOS ENVIADOS -> " + str(mensaje_bytes))
         #tamanio_bytes_enviados = self._socket.send(tamanio_mensaje_bytes)        
         bytes_enviados = self._socket.send(mensaje_bytes)
 
