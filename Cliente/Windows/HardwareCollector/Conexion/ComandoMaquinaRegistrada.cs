@@ -6,7 +6,7 @@ using System.Web.Script.Serialization;
 
 namespace HardwareCollector.Conexion
 {
-    class ComandoMaquinaRegistrada: Comando
+    public class ComandoMaquinaRegistrada: Comando
     {
         public Datos datos;
         public ComandoMaquinaRegistrada() : base("maquina_registrada") {

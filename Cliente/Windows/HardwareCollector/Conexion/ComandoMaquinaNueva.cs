@@ -6,10 +6,31 @@ using System.Web.Script.Serialization;
 
 namespace HardwareCollector.Conexion
 {
-    class ComandoMaquinaNueva: Comando
+    public class ComandoMaquinaNueva: Comando
     {
+        public Datos datos;
         public ComandoMaquinaNueva() : base("maquina_nueva") {
+            datos = new Datos();
+        }
 
+        public class Datos
+        {
+            public string nombre_maquina;
+            public SistemaOperativo sistema_operativo;
+            public Datos()
+            {
+                nombre_maquina = "";
+                sistema_operativo = new SistemaOperativo();
+            }
+        }
+
+        public class SistemaOperativo {
+            public string nombre;
+            public string version;
+            public SistemaOperativo() {
+                nombre = "";
+                version = "";
+            }
         }
 
         public override string Serialize()

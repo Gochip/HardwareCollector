@@ -1,0 +1,2 @@
+D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorInstaller\bin\Debug\HardwareCollectorInstaller.msi
+D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorInstaller\bin\Debug\HardwareCollectorInstaller.wixpdb
