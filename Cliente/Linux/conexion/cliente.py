@@ -55,7 +55,6 @@ class Cliente:
 
     def recibir(self):
         max_datos = 1024
-        print("sasa")
         datos = self._socket.recv(max_datos)   #en bytes
 #        datos = b'{"comando": "maquina_registrada", "datos": {"id":"321"}}'
 #        datos = b'{"comando": "configurar", "datos": {"configuracion":{"servidor": {"ip": "127.0.0.1", "puerto": 30303}, "informes": [{"id": "prueba_cliente_linux", "informacion": ["procesador", "memorias_ram", "discos_duros"], "tipo": "programado", "hora": "2015-08-15 20:40:00"}]}}}'
