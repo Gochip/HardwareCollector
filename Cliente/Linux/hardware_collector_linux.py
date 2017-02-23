@@ -42,6 +42,7 @@ try:
             datos_cmd_inicio.set_id(archivo.getid())
             cmd_inicio.set_datos(datos_cmd_inicio)
             cliente.enviar_comando(cmd_inicio)
+            print("inicio")
             #ya está en funcionamiento
         else:
             #Ya tiene asignada IP y comienza a trabajar

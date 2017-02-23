@@ -50,13 +50,12 @@ class Cliente:
 
     def enviar(self, datos):
         mensaje_bytes = (datos).encode('ascii')
-        tamanio_mensaje_bytes = (str(len(mensaje_bytes))).encode('ascii')        
-        #print("DATOS ENVIADOS -> " + str(mensaje_bytes))
-        #tamanio_bytes_enviados = self._socket.send(tamanio_mensaje_bytes)        
+        print("DATOS ENVIADOS -> " + str(mensaje_bytes))
         bytes_enviados = self._socket.send(mensaje_bytes)
 
     def recibir(self):
         max_datos = 1024
+        print("sasa")
         datos = self._socket.recv(max_datos)   #en bytes
 #        datos = b'{"comando": "maquina_registrada", "datos": {"id":"321"}}'
 #        datos = b'{"comando": "configurar", "datos": {"configuracion":{"servidor": {"ip": "127.0.0.1", "puerto": 30303}, "informes": [{"id": "prueba_cliente_linux", "informacion": ["procesador", "memorias_ram", "discos_duros"], "tipo": "programado", "hora": "2015-08-15 20:40:00"}]}}}'
