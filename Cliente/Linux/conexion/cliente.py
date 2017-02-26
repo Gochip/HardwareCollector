@@ -9,6 +9,7 @@ from conexion.comando_maquina_registrada import ComandoMaquinaRegistrada
 from conexion.comando_reportar import ComandoReportar
 from conexion.comando_solicitar import ComandoSolicitar
 from util.constantes import *
+from util.excepciones import *
 import json
 
 class Cliente:
@@ -49,7 +50,7 @@ class Cliente:
         self.enviar(cmd.serialize())
 
     def enviar(self, datos):
-        mensaje_bytes = (datos).encode('ascii')
+        mensaje_bytes = (datos+"\r\n").encode('ascii')
         print("DATOS ENVIADOS -> " + str(mensaje_bytes))
         bytes_enviados = self._socket.send(mensaje_bytes)
 
@@ -66,11 +67,10 @@ class Cliente:
         mensaje_recibido = self.recibir()
         cmd_recibido = None
         try:
-            #inicio_cmd = mensaje_recibido.find("comando: \"") + 10
-            #fin_cmd = mensaje_recibido.find("\", datos:")
-            #comando = mensaje_recibido[inicio_cmd:fin_cmd]
             comando = json.loads(mensaje_recibido)
-            if (comando['comando'] == MAQUINA_REGISTRADA):
+            if comando is None:
+                pass
+            elif (comando['comando'] == MAQUINA_REGISTRADA):
                 cmd_recibido = ComandoMaquinaRegistrada()
                 cmd_recibido = cmd_recibido.deserialize(mensaje_recibido)
             elif (comando['comando'] == CONFIGURAR):
@@ -80,7 +80,7 @@ class Cliente:
                 cmd_recibido = ComandoSolicitar()
                 cmd_recibido = cmd_recibido.deserialize(mensaje_recibido)
         except KeyError:
-            print("COMANDO NO INDENTIFICADO")
+            raise ExcepcionComando()
         return cmd_recibido
 
     def desconectar(self):

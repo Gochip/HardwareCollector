@@ -33,9 +33,8 @@ class ControladorArchivoConfiguracion:
             informes_str += "]"
         else:
             informes_str = "[]"    
-        str_archivo = '{"id":"'+archivo_configuracion.getid()+'",'
+        str_archivo = '{"id":"'+str(archivo_configuracion.getid())+'",'
         str_archivo += '"configuracion":{"servidor":'+servidor_str+',"informes":'+informes_str+'}}'
-        print(str_archivo)
         archivo = open(self.ruta_archivo_configuracion, "w")
         archivo.write(str_archivo)
 

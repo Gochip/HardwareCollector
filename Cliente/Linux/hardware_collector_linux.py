@@ -31,7 +31,10 @@ try:
         cliente.conectar() #cliente inicia socket con servidor. DESCOMENTAR
         if (not archivo.posee_id()):
             #enviar comando máquina nueva, recibir id, actualizar archivo
+            recolector = collector.Collector()
+            maquina_nueva = recolector.get_maquina_nueva()
             cmd_maquina_nueva = ComandoMaquinaNueva()
+            cmd_maquina_nueva.datos.actualizar_datos(maquina_nueva)
             cliente.enviar_comando(cmd_maquina_nueva)
             cmd_maquina_registrada = cliente.recibir_comando()
             id_maquina_registrada = cmd_maquina_registrada.get_datos().get_id()
@@ -55,12 +58,12 @@ try:
         while (True):
             print("EN FUNCIONAMIENTO")
             cmd = cliente.recibir_comando()
-    #        print(vars(cmd))
             if (type(cmd) is ComandoConfigurar):
                 print("RECIBO COMANDO CONFIGURAR, CONFIGURACIÓN RECIBIDA");
                 #piso la configuracion actual, solo informes, del cliente.
                 cmd_configurar = cmd
-                archivo.setconfiguracion(cmd_configurar.get_datos().get_configuracion().getconfiguracion())
+                informes = cmd_configurar.get_datos().get_configuracion().getconfiguracion().getinformes()
+                archivo.getconfiguracion().setinformes(informes)
                 ControladorArchivoConfiguracion.escribir_archivo(archivo)
             elif (type(cmd) is ComandoSolicitar):
                 print("RECIBO COMANDO SOLICITAR, ENVÍO DE INFORME");
@@ -71,7 +74,6 @@ try:
                 informacion_informar = [] # ComandoInformar.ElementoInfomacion
                 recolector = collector.Collector()
                 maquina = recolector.get_maquina()
-    #            print(vars(maquina.getprocesador()))
                 for i in range(0,len(informacion_solicitada)):
                     if informacion_solicitada[i] == PROCESADOR:
                         procesador = maquina.getprocesador()
@@ -112,5 +114,7 @@ except ExcepcionFileIO as e:
     print(e._url + '--> ' +e._mensaje )
 except PermissionError:
     print("Necesita permisos de superusuario")
+except ExcepcionComando as e:
+    print(e._url + '--> ' +e._mensaje )
 except KeyboardInterrupt:
     print("\nCHAU")

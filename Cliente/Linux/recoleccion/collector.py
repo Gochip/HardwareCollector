@@ -1,9 +1,10 @@
-import componentes.discoduro as discoduro
-import componentes.memoriaram as memoriaram
-import componentes.procesador as procesador
-import componentes.maquina as maquina
 import platform
 import subprocess
+import componentes.maquina as maquina
+import componentes.sistemaoperativo as sistemaoperativo
+import componentes.discoduro as discoduro
+import componentes.procesador as procesador
+import componentes.memoriaram as memoriaram
 from util.excepciones import *
 
 class Collector():
@@ -13,6 +14,19 @@ class Collector():
         maq.setdiscosduro(self.get_discosduro())
         maq.setprocesador(self.get_procesador_cpuinfo())
         maq.setmemoriasram(self.get_memoriasram())
+        return maq
+
+    def get_maquina_nueva(self):
+        maq = maquina.Maquina()
+        maq.setnombre(platform.node())
+        sistema = platform.system()
+        if sistema == '':
+            sistema = None
+        version = platform.version()
+        if version == '':
+            version = None
+        so = sistemaoperativo.SistemaOperativo(sistema, version)
+        maq.setsistemaoperativo(so)
         return maq
     
     def get_memoriasram(self):
@@ -167,8 +181,8 @@ class Collector():
             _procesador.setfabricante(procesador_fisico['vendor_id'])
             _procesador.setnombre(procesador_fisico['model name'])
             _procesador.setdescripcion(procesador_fisico['model name'])
-            _procesador.settamaniocache(procesador_fisico['cache size'])
-            _procesador.setcantidadnucleos(procesador_fisico['cpu cores'])
+            _procesador.settamaniocache(procesador_fisico['cache size'])#KB
+            _procesador.setcantidadnucleos(int(procesador_fisico['cpu cores']))
         except (IOError, FileNotFoundError):
             raise ExcepcionFileIO(cpuinfo)
         _procesador.setarquitectura(platform.architecture()[0])
