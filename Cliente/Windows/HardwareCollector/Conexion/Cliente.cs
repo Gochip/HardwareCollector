@@ -62,34 +62,34 @@ namespace HardwareCollector.Conexion
 
         public void enviar(string datos)
         {
-            
-            //byte[] mensaje = Encoding.ASCII.GetBytes(datos + "\r\n");
-            //Console.WriteLine("Envie: " + datos);
-            //int bytesEnviados = socket.Send(mensaje);
-            
-            int tamanioMensaje = System.Text.Encoding.ASCII.GetByteCount(datos);
-            byte[] bytesDatos = System.Text.Encoding.ASCII.GetBytes(datos);
-            byte[] bytesTamanioMensaje = System.BitConverter.GetBytes(tamanioMensaje);
-            socket.Send(bytesTamanioMensaje);
-            socket.Send(bytesDatos);
-            
+
+            byte[] mensaje = Encoding.ASCII.GetBytes(datos + "\r\n");
+            Console.WriteLine("envie: " + datos);
+            int bytesenviados = socket.Send(mensaje);
+
+            //int tamanioMensaje = System.Text.Encoding.ASCII.GetByteCount(datos);
+            //byte[] bytesDatos = System.Text.Encoding.ASCII.GetBytes(datos);
+            //byte[] bytesTamanioMensaje = System.BitConverter.GetBytes(tamanioMensaje);
+            //socket.Send(bytesTamanioMensaje);
+            //socket.Send(bytesDatos);
+
         }
 
         public string recibir()
         {
-            //byte[] buffer = new byte[1024];
-            //int bytesRecibidos = socket.Receive(buffer);
-            ////bytesRecibidos es la cantidad de bytes recibidos
-            //string mensaje = Encoding.ASCII.GetString(buffer, 0, bytesRecibidos);
-            //return mensaje;
-            
-            byte[] rcvLenBytes = new byte[4];
-            socket.Receive(rcvLenBytes);
-            int rcvLen = System.BitConverter.ToInt32(rcvLenBytes, 0);
-            byte[] rcvBytes = new byte[rcvLen];
-            socket.Receive(rcvBytes);
-            String rcv = System.Text.Encoding.ASCII.GetString(rcvBytes);
-            return rcv;
+            byte[] buffer = new byte[1024];
+            int bytesRecibidos = socket.Receive(buffer);
+            //bytesRecibidos es la cantidad de bytes recibidos
+            string mensaje = Encoding.ASCII.GetString(buffer, 0, bytesRecibidos);
+            return mensaje;
+
+            //byte[] rcvLenBytes = new byte[4];
+            //socket.Receive(rcvLenBytes);
+            //int rcvLen = System.BitConverter.ToInt32(rcvLenBytes, 0);
+            //byte[] rcvBytes = new byte[rcvLen];
+            //socket.Receive(rcvBytes);
+            //String rcv = System.Text.Encoding.ASCII.GetString(rcvBytes);
+            //return rcv;
         }
 
         public Comando recibirComando()

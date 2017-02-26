@@ -1,4 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceProcess;
+using System.Text;
+using System.Threading.Tasks;
+using System;
 using System.Management;
 using System.Collections.Generic;
 using System.Web.Script.Serialization;
@@ -9,19 +18,31 @@ using HardwareCollector.Util;
 using System.Net.Sockets;
 using System.IO;
 
-namespace HardwareCollector
+namespace HardwareCollectorService
 {
-    class Principal
+    public partial class HardwareCollectorService : ServiceBase
     {
-
-        //https://msdn.microsoft.com/en-us/library/aa390887(v=vs.85).aspx
-        public static void Main()
+        public HardwareCollectorService()
         {
+            InitializeComponent();
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            this.Main();
+        }
+
+        protected override void OnStop()
+        {
+        }
+
+        private void Main()
+        {
+            System.IO.StreamWriter log = new System.IO.StreamWriter("d:\\hc_logs.txt");
             try
             {
                 if (ControladorArchivoConfiguracion.ExisteArchivo())
                 {
-                    Recolector recolector = new Recolector();
                     ArchivoConfiguracion archivo = ControladorArchivoConfiguracion.LeerArchivo();
                     //si es el archivo no tiene la direccion del servidor, termina...
                     if (ControladorArchivoConfiguracion.PoseeIpValida(archivo) && ControladorArchivoConfiguracion.PoseePuertoValido(archivo))
@@ -30,51 +51,48 @@ namespace HardwareCollector
                         cliente.ipServidor = archivo.configuracion.servidor.ip;
                         cliente.puertoServidor = archivo.configuracion.servidor.puerto;
                         cliente.conectar();
-                        Console.WriteLine("CONECTADO");
+                        log.WriteLine("CONECTADO");
                         //si no encuentra su id, le solicita al servidor
                         if (!archivo.PoseeId())
                         {
-                            Console.WriteLine("ENVIO COMANDO MAQUINA NUEVA - SOLICITANDO ID");
-                            ComandoMaquinaNueva comandoMaquinaNueva = new ComandoMaquinaNueva();
-                            comandoMaquinaNueva.datos.nombre_maquina = recolector.GetNombreMaquina();
-                            SistemaOperativo sistemaOperativo = recolector.GetSistemaOperativo();
-                            comandoMaquinaNueva.datos.sistema_operativo.nombre = sistemaOperativo.Nombre;
-                            comandoMaquinaNueva.datos.sistema_operativo.version = sistemaOperativo.Version;
-                            cliente.enviarComando(comandoMaquinaNueva);
+                            log.WriteLine("ENVIO COMANDO MAQUINA NUEVA - SOLICITANDO ID");
+                            cliente.enviarComando(new ComandoMaquinaNueva());
                             ComandoMaquinaRegistrada comandoMaquinaRegistrada = ((ComandoMaquinaRegistrada)cliente.recibirComando());
                             string id = comandoMaquinaRegistrada.datos.id;
                             archivo.id = id;
-                            Console.WriteLine("COMANDO MAQUINA REGISTRADA RECIBIDO, ID MAQUINA: " + id);
+                            log.WriteLine("COMANDO MAQUINA REGISTRADA RECIBIDO, ID MAQUINA: " + id);
                             ControladorArchivoConfiguracion.EscribirArchivo(archivo);
                             archivo = ControladorArchivoConfiguracion.LeerArchivo();
                             ComandoInicio comandoInicio = new ComandoInicio();
                             comandoInicio.datos.id = archivo.id;
-                            Console.WriteLine("ENVIO COMANDO INICIO SOLICTANDO CONFIGURACION");
+                            log.WriteLine("ENVIO COMANDO INICIO SOLICTANDO CONFIGURACION");
                             cliente.enviarComando(comandoInicio);
                             //necesito configuracion
                             //espero el mensaje del servidor
                             ComandoConfigurar comandoConfigurar = ((ComandoConfigurar)cliente.recibirComando());
                             archivo.configuracion.informes = ((ArchivoConfiguracion)comandoConfigurar.datos.configuracion).configuracion.informes;
                             ControladorArchivoConfiguracion.EscribirArchivo(archivo);
-                            Console.WriteLine("RECIBO COMANDO CONFIGURAR, CONFIGURACION RECIBIDA");
+                            log.WriteLine("RECIBO COMANDO CONFIGURAR, CONFIGURACION RECIBIDA");
                         }
                         else
                         {
                             //aviso que me conecte y puedo empezar a trabajar
-                            Console.WriteLine("ENVIO COMANDO INICIO SOLICTANDO CONFIGURACION");
+                            log.WriteLine("ENVIO COMANDO INICIO SOLICTANDO CONFIGURACION");
                             ComandoInicio comandoInicio = new ComandoInicio();
                             comandoInicio.datos.id = archivo.id;
                             cliente.enviarComando(comandoInicio);
                         }
                         //...
-                        //estoy en funcionamiento, por ahora solo modo activo
+                        //estoy en funcionamiento
+
+
                         while (true)
                         {
-                            Console.WriteLine("EN FUNCIONAMIENTO");
+                            log.WriteLine("EN FUNCIONAMIENTO");
                             Comando comando = cliente.recibirComando();
                             if (comando is ComandoConfigurar)
                             {
-                                Console.WriteLine("RECIBO COMANDO CONFIGURAR, CONFIGURACION RECIBIDA");
+                                log.WriteLine("RECIBO COMANDO CONFIGURAR, CONFIGURACION RECIBIDA");
                                 //piso la configuracion actual del cliente, podria solo pisar la parte de informes (y no la id cliente y datos del servidor)
                                 ComandoConfigurar comandoConfigurar = (ComandoConfigurar)comando;
                                 archivo.configuracion.informes = ((ArchivoConfiguracion)comandoConfigurar.datos.configuracion).configuracion.informes;
@@ -82,14 +100,15 @@ namespace HardwareCollector
                             }
                             else if (comando is ComandoSolicitar)
                             {
-                                Console.WriteLine("RECIBO COMANDO SOLICITAR");
+                                log.WriteLine("RECIBO COMANDO SOLICITAR");
                                 ComandoSolicitar comandoSolicitar = (ComandoSolicitar)comando;
                                 ComandoInformar comandoInformar = new ComandoInformar();
-                                Console.WriteLine(comandoSolicitar.datos.id_solicitud);
+                                log.WriteLine(comandoSolicitar.datos.id_solicitud);
                                 comandoInformar.datos.id_solicitud = comandoSolicitar.datos.id_solicitud;
-                                Console.WriteLine(comandoSolicitar.datos.informacion[0]);
+                                log.WriteLine(comandoSolicitar.datos.informacion[0]);
                                 List<ComandoInformar.ElementoInformacion> informacionInformar = new List<ComandoInformar.ElementoInformacion>();
                                 List<string> informacionSolicitada = comandoSolicitar.datos.informacion;
+                                Recolector recolector = new Recolector();
                                 //por defecto pido toda la maquina, es ineficiente
                                 Maquina maquina = recolector.GetMaquina();
                                 for (int i = 0; i < informacionSolicitada.Count; i++)
@@ -111,14 +130,8 @@ namespace HardwareCollector
                                     {
                                         List<MemoriaRam> memorias = maquina.MemoriasRam;
                                         ComandoInformar.ElementoMemoria elementoMemoria = new ComandoInformar.ElementoMemoria();
-                                        //int cant = 0;
                                         foreach (MemoriaRam memoria in memorias)
                                         {
-                                            /*
-                                            cant++;
-                                            if (cant > 1) {
-                                                break;
-                                            }*/
                                             ComandoInformar.DatosInformacionMemoriasRam dato = new ComandoInformar.DatosInformacionMemoriasRam();
                                             dato.banco = memoria.Banco;
                                             dato.tecnologia = memoria.Tecnologia;
@@ -151,20 +164,20 @@ namespace HardwareCollector
                                     }
                                 }
                                 comandoInformar.datos.informacion = informacionInformar;
-                                Console.WriteLine("ENVIO COMANDO INFORMAR");
+                                log.WriteLine("ENVIO COMANDO INFORMAR");
                                 cliente.enviarComando(comandoInformar);
                             }
                         }
                     }
                     else
                     {
-                        Console.WriteLine("El archivo de configuración existe pero no posee ip y/o puerto válido.");
+                        log.WriteLine("El archivo de configuración existe pero no posee ip y/o puerto válido.");
                     }
                 }
                 else
                 {
                     //si o si debe existir el archivo con la direccion del servidor, sino no puede contectarse...
-                    Console.WriteLine("No existe el archivo de configuración, no es posible hallar el servidor.");
+                    log.WriteLine("No existe el archivo de configuración, no es posible hallar el servidor.");
                 }
             }
             catch (SocketException se)
@@ -172,33 +185,19 @@ namespace HardwareCollector
                 //10061:  servidor no encontrado
                 if (se.ErrorCode.Equals(10061))
                 {
-                    Console.WriteLine("Servidor apagado.");
+                    log.WriteLine("Servidor apagado.");
                 }
                 else
                 {
-                    Console.WriteLine("Error en el socket: {0}", se.ToString());
+                    log.WriteLine("Error en el socket: {0}", se.ToString());
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: {0}", e.ToString());
+                log.WriteLine("Error: {0}", e.ToString());
             }
-            Console.ReadLine();
+            log.Close();
         }
 
-        private static void ConsultarDatosClaseWMI(String NombreClase)
-        {
-            SelectQuery selectQuery = new SelectQuery("SELECT * FROM " + NombreClase);
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
-            foreach (ManagementObject managementObject in searcher.Get())
-            {
-                foreach (PropertyData propiedad in managementObject.Properties)
-                {
-                    Console.WriteLine(propiedad.Name + ": " + managementObject[propiedad.Name]);
-                }
-            }
-        }
     }
-
 }
-

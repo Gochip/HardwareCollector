@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Componentes\SistemaOperativo.cs" />
     <Compile Include="Conexion\Comando.cs" />
     <Compile Include="Conexion\ComandoConfigurar.cs" />
     <Compile Include="Conexion\ComandoInformar.cs" />
