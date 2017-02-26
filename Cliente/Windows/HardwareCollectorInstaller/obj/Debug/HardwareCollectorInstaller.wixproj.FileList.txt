@@ -1,0 +1,6 @@
+obj\Debug\Product.wixobj
+D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorInstaller\bin\Debug\HardwareCollectorInstaller.msi
+D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorInstaller\bin\Debug\HardwareCollectorInstaller.wixpdb
+obj\Debug\HardwareCollectorInstaller.wixproj.BindContentsFileListnull.txt
+obj\Debug\HardwareCollectorInstaller.wixproj.BindOutputsFileListnull.txt
+obj\Debug\HardwareCollectorInstaller.wixproj.BindBuiltOutputsFileListnull.txt
