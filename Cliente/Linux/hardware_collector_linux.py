@@ -118,6 +118,7 @@ except ExcepcionComando as e:
 except Excepcion as e:
     print(e._mensaje)
     print(e.imprimir_posibles_soluciones())
+    cliente = None
     sys.exit(1)
 except RuntimeError:
     print("Conexión con Servidor rota")

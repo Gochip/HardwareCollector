@@ -16,10 +16,10 @@ class Excepcion(Exception):
         self._sugerencias = []
 
     def add_posible_solucion(self, sugerencia):
-        self._sugerencias.add(sugerencia)
+        self._sugerencias.append(sugerencia)
 
     def imprimir_posibles_soluciones(self):
         sugerencias = "Sugerencias\n"
-        for i in range(0, sugerencias):
-            sugerencias += (i + 1) + "- " + sugerencias[i] + "\n"
+        for i in range(0, len(self._sugerencias)):
+            sugerencias += str(i + 1) + "- " + self._sugerencias[i] + "\n"
         return sugerencias
