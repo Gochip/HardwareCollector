@@ -13,12 +13,12 @@ class ComandoMaquinaNueva(Comando):
     class Datos:
         def __init__(self):
             self.nombre_maquina = ""
-            self.sistemaoperativo = None
+            self.sistema_operativo = None
 
         def actualizar_datos(self, maquina):
             self.nombre_maquina = maquina.getnombre()
-            self.sistemaoperativo = ComandoMaquinaNueva.DatosSistemaOperativo()
-            self.sistemaoperativo.actualizar_so(maquina.getsistemaoperativo().__dict__)
+            self.sistema_operativo = ComandoMaquinaNueva.DatosSistemaOperativo()
+            self.sistema_operativo.actualizar_so(maquina.getsistemaoperativo().__dict__)
 
     class DatosSistemaOperativo:
         def __init__(self):
@@ -29,8 +29,8 @@ class ComandoMaquinaNueva(Comando):
             self.__dict__.update(dict_elemento)
 
     def serialize(self):
-        datos_so = self.datos.sistemaoperativo.__dict__
-        self.datos.sistemaoperativo = datos_so
+        datos_so = self.datos.sistema_operativo.__dict__
+        self.datos.sistema_operativo = datos_so
         datos = self.datos.__dict__
         self.datos = datos
         print(self)

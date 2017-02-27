@@ -8,7 +8,7 @@ class DiscoDuro():
         self.tipo_interfaz = ""
         self.firmware = ""
         self.cantidad_particiones = 0
-        self.tamanio = 0.0
+        self.tamanio = ""
     
     def setid(self, id):
         self.id = id

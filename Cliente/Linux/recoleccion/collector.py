@@ -60,102 +60,104 @@ class Collector():
         return memorias
     
     def get_discosduro(self):
+        """Obtiene datos de los discos duros no removibles. Usa una combinación
+            de comando: lsblk, /sbin/udevadm y lee del archivo
+            s/sys/class/block/{nombre}/device/vendor"""
         discos_duro = []
-        disco = discoduro.DiscoDuro()
-        #ejecuto lsblk
-        lsblk_salida = (subprocess.check_output(['lsblk']).decode('UTF-8').split('\n'))
-        datos = ''
-        datosdiscoduro = [] #['NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MOUNTPOINT(no hay punto de montura en sda-disk)']
-        for lsblk_line in lsblk_salida:
-            if (lsblk_line.rfind('disk') != -1):
-                datos = lsblk_line.rstrip().split(' ')
-                break
-        for dato in datos:
-            if(dato != ''):
-                datosdiscoduro.append(dato) 
-        #seteo el tamaño del disco        
-        disco.settamanio(datosdiscoduro[3])
-        #obtengo modelo y numero_serial del disco
-        datos = subprocess.check_output(['/sbin/udevadm', 'info', '--query=property', '--name=sda']).decode('UTF-8')
-        datosdiscoduro = datos.split('\n')
-        for linea in datosdiscoduro:
-            if linea.startswith('ID_MODEL='):
-                disco.setmodelo(linea.split('=')[1])
-            if linea.startswith('ID_SERIAL_SHORT='):
-                disco.setnumeroserie(linea.split('=')[1])
-        #seteo fabricante        
-        disco.setfabricante(subprocess.check_output(['cat', '/sys/class/block/sda/device/vendor']).decode('UTF-8').split('\n')[0])
-        discos_duro.append(disco)
-        return discos_duro
+        posibles_discos = [] #[nombre, tipo, tamanio, particiones]
 
-    def get_discosduro_(self):
-        discos_duro = []
-        disco = discoduro.DiscoDuro()
-        #ejecuto lsblk
-        lsblk_salida = (subprocess.check_output(['lsblk', '-o', 'NAME,MODEL,TYPE,SIZE']).decode('UTF-8').split('\n'))
-        datos = ''
-        datosdiscoduro = [] #['NAME,MAJ:MIN,RM,SIZE,RO,TYPE,MOUNTPOINT(no hay punto de montura en sda-disk)']
-        for lsblk_line in lsblk_salida:
-            if (lsblk_line.rfind('disk') != -1):
-                datos = lsblk_line.rstrip().split(' ')
-                break
-        for dato in datos:
-            if(dato != ''):
-                datosdiscoduro.append(dato) 
-        #seteo el tamaño del disco        
-        disco.settamanio(datosdiscoduro[3])
-        #obtengo modelo y numero_serial del disco
-        datos = subprocess.check_output(['/sbin/udevadm', 'info', '--query=property', '--name=sda']).decode('UTF-8')
-        datosdiscoduro = datos.split('\n')
-        for linea in datosdiscoduro:
-            if linea.startswith('ID_MODEL='):
-                disco.setmodelo(linea.split('=')[1])
-            if linea.startswith('ID_SERIAL_SHORT='):
-                disco.setnumeroserie(linea.split('=')[1])
-        #seteo fabricante        
-        disco.setfabricante(subprocess.check_output(['cat', '/sys/class/block/sda/device/vendor']).decode('UTF-8').split('\n')[0])
-        discos_duro.append(disco)
-        return discos_duro
+        lsblk_salida = (subprocess.check_output(['lsblk', '-o', 'KNAME,TYPE,SIZE']).decode('UTF-8').split('\n'))
 
+        for disco_o_part in lsblk_salida:
+            if disco_o_part != '' and disco_o_part != 'KNAME TYPE':
+                posibles_discos.append(disco_o_part.split())
+
+        inicial_posibles_discos = len(posibles_discos)
+        for i in range(0, inicial_posibles_discos):
+            if posibles_discos[i][1] == "disk":
+                cantidad_particiones = 0
+                for j in range(i+1, len(posibles_discos)):
+                    if posibles_discos[j][1] == "part":
+                        cantidad_particiones += 1
+                    else:
+                        break
+                posibles_discos[i].append(cantidad_particiones)
+                posibles_discos.append(posibles_discos[i])
+        posibles_discos = posibles_discos[inicial_posibles_discos:]
+
+        for d in posibles_discos:            
+            datos = subprocess.check_output(['/sbin/udevadm', 'info', '--query=property', '--name=' + d[0]]).decode('UTF-8')
+            datosdiscoduro = datos.split('\n')
+            disco = None
+            for linea in datosdiscoduro:
+                if (linea.startswith('ID_BUS=usb') or linea.startswith("ID_USB_DRIVER")):
+                    disco = None
+                    break
+                if disco is None:
+                    disco = discoduro.DiscoDuro()
+                else:
+                    if linea.startswith('ID_MODEL='):
+                        disco.setmodelo(linea.split('=')[1])
+                    if linea.startswith('ID_SERIAL_SHORT='):
+                        disco.setnumeroserie(linea.split('=')[1])
+                    if linea.startswith('ID_REVISION='):
+                        disco.setfirmware(linea.split('=')[1])
+                    if linea.startswith('ID_BUS='):
+                        disco.settipointerfaz(linea.split('=')[1])
+            if disco is not None:
+                url_fabricante = '/sys/class/block/' #{nombre}/device/vendor
+                url_fabricante += d[0] + '/device/vendor'
+                disco.setfabricante((subprocess.check_output(['cat', url_fabricante ]).decode('UTF-8').split('\n')[0]).strip())
+                disco.setcantidadparticiones(d[3])
+                disco.settamanio(d[2])
+                discos_duro.append(disco)
+        return discos_duro
     
     def get_procesador_dmicode(self):
         #faltan tamanio_cache
         proc = procesador.Procesador()
         try:
-            proc_dmidecode = subprocess.check_output(['dmidecode', '-t', 'processor']).decode('UTF-8').split('\n')          
-            for proc_dato in proc_dmidecode:            
-                proc_dato = proc_dato.lstrip()             
-                if proc_dato.startswith('Family:'):
-                    proc.setnombre(self.limpiar_string(proc_dato.split(': ')[1]))
-                elif proc_dato.startswith('Version:'):
-                    proc.setdescripcion(self.limpiar_string(proc_dato.split(': ')[1]))
-                elif proc_dato.startswith('Manufacturer:'):
-                    proc.setfabricante(self.limpiar_string(proc_dato.split(': ')[1]))
-                elif proc_dato.startswith('Current Speed:'):
-                    proc.setvelocidad(proc_dato.split(': ')[1])
-                    proc.setarquitectura(self.limpiar_string(proc_dato.split(': ')[1]))
-                elif proc_dato.startswith('Core Count:'): # Puede ser distinto a Core Enabled
-                    proc.setcantidadnucleos(self.limpiar_string(proc_dato.split(': ')[1]))
-                # hilos por nucle, verificar
-                elif proc_dato.startswith('Thread Count:'):                
-                    proc.setcantidadprocesadores(int(self.limpiar_string(proc_dato.split(': ')[1])))
+            proc_dmidecode = subprocess.check_output(['dmidecode', '-t', 'processor']).decode('UTF-8').split('\n')
         except subprocess.CalledProcessError:
-            raise ExcepcionSubprocess
-        # Verificar calculo.        
+            pass
+        for proc_dato in proc_dmidecode:            
+            proc_dato = proc_dato.lstrip()             
+            if proc_dato.startswith('Family:'):
+                proc.setnombre(self.limpiar_string(proc_dato.split(': ')[1]))
+            elif proc_dato.startswith('Version:'):
+                proc.setdescripcion(self.limpiar_string(proc_dato.split(': ')[1]))
+            elif proc_dato.startswith('Manufacturer:'):
+                proc.setfabricante(self.limpiar_string(proc_dato.split(': ')[1]))
+            elif proc_dato.startswith('Current Speed:'):
+                proc.setvelocidad(proc_dato.split(': ')[1])
+                proc.setarquitectura(self.limpiar_string(proc_dato.split(': ')[1]))
+            elif proc_dato.startswith('Core Count:'): # Puede ser distinto a Core Enabled
+                proc.setcantidadnucleos(self.limpiar_string(proc_dato.split(': ')[1]))
+            # hilos por nucle, verificar
+            elif proc_dato.startswith('Thread Count:'):                
+                proc.setcantidadprocesadores(int(self.limpiar_string(proc_dato.split(': ')[1])))
         proc.setarquitectura(platform.architecture()[0])
         return proc
     
     def get_procesador_cpuinfo(self):
-        #lee archivo /proc/cpuinfo
-        _procesador = procesador.Procesador()
-        #procesadores_logicos = subprocess.check_output(['cat', '/proc/cpuinfo']).decode('UTF-8').split('\n\n')
+        """Lee desde el archivo /proc/cpuinfo para obtener la mayoría de datos
+            del procesador. Otros datos los obtiene desde 
+            /sys/devices/system/cpu/cpu/{id_procesador_fisico}/cpufreq/scaling_max_freq."""
         url_cpuinfo = "/proc/cpuinfo"
+        url_archivo_max_velocidad = '/sys/devices/system/cpu/cpu'
+        _procesador = procesador.Procesador()
+        procesador_fisico_datos = None
+        procesadores_logicos = None
+        procesador_fisico = {}
+        cantidad_procesadores = 0
         try:
             file_procesadores_logicos = open(url_cpuinfo, 'r')
             procesadores_logicos = file_procesadores_logicos.read().split('\n\n')
             file_procesadores_logicos.close()
             procesador_fisico_datos = procesadores_logicos[0].split('\n')
-            procesador_fisico = {}
+        except (IOError, FileNotFoundError):
+            pass #raise ExcepcionFileIO(url_cpuinfo)
+        if procesador_fisico_datos is not None:
             for proc in procesador_fisico_datos:
                 if proc.startswith('physical id\t:'):
                     procesador_fisico['physical id'] = self.obtener_valor(proc,': ',1)
@@ -173,27 +175,26 @@ class Collector():
                     procesador_fisico['cache size'] = self.obtener_valor(proc,': ',1)
                 elif proc.startswith('cpu cores\t:'):
                     procesador_fisico['cpu cores'] = self.obtener_valor(proc,': ',1)
-            cantidad_procesadores = 0
-            for proc in procesadores_logicos:
-                if proc.find('\nphysical id\t: '+procesador_fisico['physical id']+'\n') != -1:
-                    cantidad_procesadores += 1
-            _procesador.setcantidadprocesadores(cantidad_procesadores)
             _procesador.setfabricante(procesador_fisico['vendor_id'])
             _procesador.setnombre(procesador_fisico['model name'])
             _procesador.setdescripcion(procesador_fisico['model name'])
             _procesador.settamaniocache(procesador_fisico['cache size'])#KB
             _procesador.setcantidadnucleos(int(procesador_fisico['cpu cores']))
-        except (IOError, FileNotFoundError):
-            raise ExcepcionFileIO(cpuinfo)
+        if procesadores_logicos is not None:
+            for proc in procesadores_logicos:
+                if proc.find('\nphysical id\t: '+procesador_fisico['physical id']+'\n') != -1:
+                    cantidad_procesadores += 1
+        if cantidad_procesadores != 0:
+            _procesador.setcantidadprocesadores(cantidad_procesadores)
         _procesador.setarquitectura(platform.architecture()[0])
-        url_archivo_max_velocidad = '/sys/devices/system/cpu/cpu'+procesador_fisico['processor']+'/cpufreq/scaling_max_freq'
+        url_archivo_max_velocidad += procesador_fisico['processor'] + '/cpufreq/scaling_max_freq'
         try:
             archivo_max_velocidad = open(url_archivo_max_velocidad, 'r')#en Khz
             velocidad = (float(archivo_max_velocidad.readline())/1000) #Mhz
             _procesador.setvelocidad(self.limpiar_string(str(velocidad)))
             archivo_max_velocidad.close()
         except (IOError, FileNotFoundError):
-            raise ExcepcionFileIO(url_archivo_max_velocidad)
+            pass #raise ExcepcionFileIO(url_archivo_max_velocidad)
         return _procesador
 
     def limpiar_string(self, valor):
