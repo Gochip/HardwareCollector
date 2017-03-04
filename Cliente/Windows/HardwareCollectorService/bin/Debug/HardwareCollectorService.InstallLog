@@ -1,107 +1,43 @@
-﻿Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
+﻿Instalando ensamblado 'D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
 Los parámetros afectados son:
    logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-No se pudieron encontrar instaladores públicos con el atributo RunInstallerAttribute.Yes en el ensamblado D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe.
-Confirmando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-No se pudieron encontrar instaladores públicos con el atributo RunInstallerAttribute.Yes en el ensamblado D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe.
-Quitar el archivo InstallState porque no hay instaladores.
-Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+   logfile = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
+   assemblypath = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
 Instalando el servicio HardwareCollectorService...
 El servicio HardwareCollectorService se ha instalado correctamente.
 Creando el origen de EventLog HardwareCollectorService en el registro Application...
-Confirmando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
+Confirmando ensamblado 'D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
 Los parámetros afectados son:
    logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
+   logfile = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
+   assemblypath = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+Desinstalando ensamblado 'D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
 Los parámetros afectados son:
    logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando el servicio HardwareCollectorService...
-Creando el origen de EventLog HardwareCollectorService en el registro Application...
-Deshaciendo ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Restaurando el registro de eventos al estado anterior para el origen HardwareCollectorService.
-Desinstalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+   logfile = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
+   assemblypath = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
 Quitando el origen de EventLog HardwareCollectorService.
 Se está quitando el servicio HardwareCollectorService del sistema...
 El servicio HardwareCollectorService se ha quitado correctamente del sistema.
-Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
+Intento de detener el servicio HardwareCollectorService.
+Instalando ensamblado 'D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
 Los parámetros afectados son:
    logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+   logfile = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
+   assemblypath = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
 Instalando el servicio HardwareCollectorService...
 El servicio HardwareCollectorService se ha instalado correctamente.
 Creando el origen de EventLog HardwareCollectorService en el registro Application...
-Confirmando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
+Confirmando ensamblado 'D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
 Los parámetros afectados son:
    logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
+   logfile = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
+   assemblypath = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+Desinstalando ensamblado 'D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
 Los parámetros afectados son:
    logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando el servicio HardwareCollectorService...
-Creando el origen de EventLog HardwareCollectorService en el registro Application...
-Deshaciendo ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Restaurando el registro de eventos al estado anterior para el origen HardwareCollectorService.
-Desinstalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+   logfile = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
+   assemblypath = D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
 Quitando el origen de EventLog HardwareCollectorService.
 Se está quitando el servicio HardwareCollectorService del sistema...
 El servicio HardwareCollectorService se ha quitado correctamente del sistema.
-Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando el servicio HardwareCollectorService...
-El servicio HardwareCollectorService se ha instalado correctamente.
-Creando el origen de EventLog HardwareCollectorService en el registro Application...
-Confirmando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Instalando el servicio HardwareCollectorService...
-Creando el origen de EventLog HardwareCollectorService en el registro Application...
-Deshaciendo ensamblado 'D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe'.
-Los parámetros afectados son:
-   logtoconsole = 
-   logfile = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.InstallLog
-   assemblypath = D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-Restaurando el registro de eventos al estado anterior para el origen HardwareCollectorService.

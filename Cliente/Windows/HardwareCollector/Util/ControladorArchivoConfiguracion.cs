@@ -9,7 +9,7 @@ namespace HardwareCollector.Util
 {
     public class ControladorArchivoConfiguracion
     {
-        public static string RutaArchivoConfiguracion = Directory.GetCurrentDirectory() + "\\..\\..\\config.json";
+        public static string RutaArchivoConfiguracion = "C:\\config_hc.json";
 
         public static bool ExisteArchivo() {
             Console.WriteLine(RutaArchivoConfiguracion);

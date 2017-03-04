@@ -23,32 +23,41 @@
                        Guid="1b395835-90c3-42ae-95f9-94790c4255e5">
               <File Id="HardwareCollectorService.exe"
                     Name="HardwareCollectorService.exe"
-                    Source="D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe"
+                    Source="D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe"
                     Vital="yes"
                     KeyPath="yes"
                     DiskId="1" />
               <File Id="HardwareCollectorService.exe.config"
                     Name="HardwareCollectorService.exe.config"
-                    Source="D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe.config"
+                    Source="D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe.config"
+                    Vital="yes"
+                    KeyPath="no"
+                    DiskId="1" />
+              <File Id="HardwareCollector.exe"
+                    Name="HardwareCollector.exe"
+                    Source="D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollector.exe"
                     Vital="yes"
                     KeyPath="no"
                     DiskId="1" />
               <ServiceInstall Id="ServiceInstaller"
                               Type="ownProcess"
                               Vital="yes"
-                              Name="Labsis:HardwareCollectorService"
-                              DisplayName="Labsis:HardwareCollectorService"
-                              Description="Servicio cliente de HardwareCollector para recuperar datos de hardware de los componentes de las máquinas y enviarlas a un servidor."
+                              Name="HardwareCollectorService"
+                              DisplayName="HardwareCollectorService"
+                              Description="(WIX installer) Servicio cliente de HardwareCollector para recuperar datos de hardware de los componentes de las máquinas y enviarlas a un servidor."
                               Start="auto"
                               Account="LocalSystem"
                               ErrorControl="critical"
                               Interactive="no" />
-              <ServiceControl Id="StartService"
-                              Start="install"
-                              Stop="both"
-                              Remove="uninstall"
-                              Name="Labsis:HardwareCollectorService"
-                              Wait="yes" />
+              <ServiceControl Id="ServiceControl_Start"
+                Name="HardwareCollectorService"
+                Start="install"
+                Wait="no" />
+              <ServiceControl Id="ServiceControl_Stop"
+                Name="HardwareCollectorService"
+                Stop="both"
+                Remove="uninstall"
+                Wait="yes" />
             </Component>
           </Directory>
         </Directory>
@@ -61,5 +70,17 @@
              Level="1">
       <ComponentRef Id="Labsis.HardwareCollectorService" />
     </Feature>
+    
+    <Binary Id="actionCrearArchivoConfig" SourceFile="D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\HardwareCollectorCustomAction.CA.dll" />
+    
+    <CustomAction Id="actionCrearArchivoConfigCustomAction" BinaryKey="actionCrearArchivoConfig" DllEntry="CustomActionCrearArchiveConfig"
+      Execute="deferred" Return="check" Impersonate="no"/>
+    
+    <InstallExecuteSequence>
+      <Custom Action='actionCrearArchivoConfigCustomAction' After='InstallFiles'>
+        NOT Installed AND NOT PATCH
+      </Custom>
+    </InstallExecuteSequence>
+  
   </Product>
 </Wix>

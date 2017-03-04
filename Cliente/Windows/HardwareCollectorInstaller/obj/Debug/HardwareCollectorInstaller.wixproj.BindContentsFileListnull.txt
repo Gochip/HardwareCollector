@@ -1,2 +1,3 @@
-D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
-D:\Programacion\Python\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe.config
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollector.exe
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorService\bin\Debug\HardwareCollectorService.exe.config

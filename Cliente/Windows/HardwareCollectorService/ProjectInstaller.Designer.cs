@@ -39,8 +39,8 @@
             // 
             // HardwareCollectorService
             // 
-            this.HardwareCollectorService.Description = "Servicio cliente de HardwareCollector para recuperar datos de hardware de los com" +
-    "ponentes de las máquinas y enviarlas a un servidor.";
+            this.HardwareCollectorService.Description = "(Installer c#) Servicio cliente de HardwareCollector para recuperar datos de hard" +
+    "ware de los componentes de las máquinas y enviarlas a un servidor.";
             this.HardwareCollectorService.DisplayName = "HardwareCollectorService";
             this.HardwareCollectorService.ServiceName = "HardwareCollectorService";
             this.HardwareCollectorService.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
