@@ -1,12 +1,11 @@
 class Maquina():    
     
     def __init__(self):
-        self.ipv4 = ""        
-        self.ipv6 = ""
-        self.mac = ""
-        self.nombre = ""
-        self.fabricante = ""
-        self.sistema_operativo = ""
+        self.ipv4 = None
+        self.ipv6 = None
+        self.mac = None
+        self.nombre_maquina = None
+        self.sistema_operativo = None
         self.memorias_ram = []       
         self.discos_duro = []       
         
@@ -23,7 +22,7 @@ class Maquina():
         self.ipv4 = mac
 
     def setnombre(self, nombre):
-        self.nombre = nombre
+        self.nombre_maquina = nombre
     
     def setfabricante(self, fabricante):
         self.fabricante = fabricante
@@ -46,6 +45,12 @@ class Maquina():
     def setprocesador(self, procesador):
         self.procesador = procesador
     
+    def getsistemaoperativo(self):
+        return self.sistema_operativo
+
+    def getnombre(self):
+        return self.nombre_maquina
+
     def getprocesador(self):
         return self.procesador
 

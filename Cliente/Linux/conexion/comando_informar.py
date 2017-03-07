@@ -35,9 +35,9 @@ class ComandoInformar(Comando):
 
     class Datos:
         def __init__(self):
-            self.id_solicitud = ""
-            self.id_informe = ""
-            self.hash_configuracion = ""
+            self.id_solicitud = None
+            self.id_informe = None
+            self.hash_configuracion = None
             self.informacion = [] #ElementoInformacion
         
         def set_id_solicitud(self, id_solicitud):
@@ -118,7 +118,7 @@ class ComandoInformar(Comando):
     class DatosInformacionMemoriasRam(DatosInformacion):
         def __init__(self):
             self.banco = ""
-            self.tecnologias = ""
+            self.tecnologia = ""
             self.fabricante = ""
             self.numero_serie = ""
             self.tamanio_bus_datos = ""

@@ -8,6 +8,9 @@ USE hc_bd;
 
 CREATE TABLE maquinas(
     id INT NOT NULL AUTO_INCREMENT,
+	nombre_maquina VARCHAR(255), 
+	nombre_sistema_operativo VARCHAR(255), 
+	version_sistema_operativo VARCHAR(255),
     mac VARCHAR(20),
     ipv4 VARCHAR(20),
     ipv6 VARCHAR(200),

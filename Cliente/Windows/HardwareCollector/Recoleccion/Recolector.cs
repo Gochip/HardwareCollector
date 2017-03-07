@@ -13,10 +13,36 @@ namespace HardwareCollector.Recoleccion
         public Maquina GetMaquina()
         {
             Maquina maquina = new Maquina();
+            maquina.Nombre = GetNombreMaquina();
+            maquina.SistemaOperativo = GetSistemaOperativo();
             maquina.Procesador = GetProcesador();
             maquina.DiscosDuros = GetDiscosDuros();
             maquina.MemoriasRam = GetMemoriasRam();
             return maquina;
+        }
+
+        public SistemaOperativo GetSistemaOperativo() {
+            SistemaOperativo sistemaOperativo = new SistemaOperativo();
+            SelectQuery selectQuery = new SelectQuery("SELECT caption, version FROM Win32_OperatingSystem");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
+            foreach (ManagementObject managementObject in searcher.Get())
+            {
+                sistemaOperativo.Nombre = managementObject.GetPropertyValue("caption").ToString();
+                sistemaOperativo.Version = managementObject.GetPropertyValue("version").ToString();
+            }
+            return sistemaOperativo;
+        }
+
+        public string GetNombreMaquina()
+        {
+            string nombre = "";
+            SelectQuery selectQuery = new SelectQuery("SELECT csname FROM Win32_OperatingSystem");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
+            foreach (ManagementObject managementObject in searcher.Get())
+            {
+                nombre = managementObject.GetPropertyValue("csname").ToString();
+            }
+            return nombre;
         }
 
         //https://msdn.microsoft.com/en-us/library/aa394373(v=vs.85).aspx

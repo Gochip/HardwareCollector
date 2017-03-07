@@ -1,0 +1,7 @@
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\HardwareCollectorCustomAction.dll
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\HardwareCollectorCustomAction.CA.dll
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\HardwareCollectorCustomAction.pdb
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\Microsoft.Deployment.WindowsInstaller.dll
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\Microsoft.Deployment.WindowsInstaller.xml
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\obj\x86\Debug\HardwareCollectorCustomAction.dll
+D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\obj\x86\Debug\HardwareCollectorCustomAction.pdb

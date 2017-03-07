@@ -35,17 +35,15 @@ class ComandoConfigurar(Comando):
         datos.__dict__.update(comando['datos'])
         archivo = ArchivoConfiguracion()
         configuracion = Configuracion()
-        configuracion.__dict__.update(comando['datos']['configuracion'])
-        servidor = Servidor(**comando['datos']['configuracion']['servidor'])
+        configuracion.__dict__.update(comando['datos']['configuracion']['configuracion'])
         informes_conf = []
         try:
-            informes = comando['datos']['configuracion']['informes']
+            informes = comando['datos']['configuracion']['configuracion']['informes']
             for i in range(0,len(informes)):
                 informes_conf.append((Informe(**informes[i])))
         except KeyError:
             print("ERROR EN LA DESERIALIZACIÓN DE CONFIGURAR")
         configuracion.setinformes(informes_conf)
-        configuracion.setservidor(servidor)
         archivo.setconfiguracion(configuracion)
         datos.set_configuracion(archivo)
         comando_respuesta.set_datos(datos)

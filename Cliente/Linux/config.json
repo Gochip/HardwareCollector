@@ -1,1 +1,1 @@
-{"id":"321","configuracion":{"servidor":{"puerto": 30330, "ip": "127.0.0.1"},"informes":[]}}
+{"id":"3","configuracion":{"servidor":{"ip": "milagroszea", "puerto": 30330},"informes":[{"id": 3, "hora": null, "informacion": ["discos_duros", "procesador", "memorias_ram"], "tipo": "inicio_sistema"}]}}

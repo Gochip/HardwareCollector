@@ -21,6 +21,7 @@ namespace HardwareCollector
             {
                 if (ControladorArchivoConfiguracion.ExisteArchivo())
                 {
+                    Recolector recolector = new Recolector();
                     ArchivoConfiguracion archivo = ControladorArchivoConfiguracion.LeerArchivo();
                     //si es el archivo no tiene la direccion del servidor, termina...
                     if (ControladorArchivoConfiguracion.PoseeIpValida(archivo) && ControladorArchivoConfiguracion.PoseePuertoValido(archivo))
@@ -34,7 +35,12 @@ namespace HardwareCollector
                         if (!archivo.PoseeId())
                         {
                             Console.WriteLine("ENVIO COMANDO MAQUINA NUEVA - SOLICITANDO ID");
-                            cliente.enviarComando(new ComandoMaquinaNueva());
+                            ComandoMaquinaNueva comandoMaquinaNueva = new ComandoMaquinaNueva();
+                            comandoMaquinaNueva.datos.nombre_maquina = recolector.GetNombreMaquina();
+                            SistemaOperativo sistemaOperativo = recolector.GetSistemaOperativo();
+                            comandoMaquinaNueva.datos.sistema_operativo.nombre = sistemaOperativo.Nombre;
+                            comandoMaquinaNueva.datos.sistema_operativo.version = sistemaOperativo.Version;
+                            cliente.enviarComando(comandoMaquinaNueva);
                             ComandoMaquinaRegistrada comandoMaquinaRegistrada = ((ComandoMaquinaRegistrada)cliente.recibirComando());
                             string id = comandoMaquinaRegistrada.datos.id;
                             archivo.id = id;
@@ -61,9 +67,7 @@ namespace HardwareCollector
                             cliente.enviarComando(comandoInicio);
                         }
                         //...
-                        //estoy en funcionamiento
-
-
+                        //estoy en funcionamiento, por ahora solo modo activo
                         while (true)
                         {
                             Console.WriteLine("EN FUNCIONAMIENTO");
@@ -86,7 +90,6 @@ namespace HardwareCollector
                                 Console.WriteLine(comandoSolicitar.datos.informacion[0]);
                                 List<ComandoInformar.ElementoInformacion> informacionInformar = new List<ComandoInformar.ElementoInformacion>();
                                 List<string> informacionSolicitada = comandoSolicitar.datos.informacion;
-                                Recolector recolector = new Recolector();
                                 //por defecto pido toda la maquina, es ineficiente
                                 Maquina maquina = recolector.GetMaquina();
                                 for (int i = 0; i < informacionSolicitada.Count; i++)
@@ -108,8 +111,14 @@ namespace HardwareCollector
                                     {
                                         List<MemoriaRam> memorias = maquina.MemoriasRam;
                                         ComandoInformar.ElementoMemoria elementoMemoria = new ComandoInformar.ElementoMemoria();
+                                        //int cant = 0;
                                         foreach (MemoriaRam memoria in memorias)
                                         {
+                                            /*
+                                            cant++;
+                                            if (cant > 1) {
+                                                break;
+                                            }*/
                                             ComandoInformar.DatosInformacionMemoriasRam dato = new ComandoInformar.DatosInformacionMemoriasRam();
                                             dato.banco = memoria.Banco;
                                             dato.tecnologia = memoria.Tecnologia;

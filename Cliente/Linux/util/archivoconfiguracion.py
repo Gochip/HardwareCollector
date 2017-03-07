@@ -66,7 +66,7 @@ class Servidor:
 
 class Informe:
 
-    def __init__(self, id, informacion, tipo, hora):
+    def __init__(self, id, informacion, tipo=None, hora=None):
         self.id = id
         self.informacion = informacion
         self.tipo = tipo

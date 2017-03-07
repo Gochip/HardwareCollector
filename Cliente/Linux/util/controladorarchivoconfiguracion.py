@@ -4,8 +4,6 @@ import json as json
 import os.path as path
 from .archivoconfiguracion import *
 
-from pprint import pprint
-
 class ControladorArchivoConfiguracion:
 
     ruta_archivo_configuracion = "/../config.json"
@@ -35,9 +33,8 @@ class ControladorArchivoConfiguracion:
             informes_str += "]"
         else:
             informes_str = "[]"    
-        str_archivo = '{"id":"'+archivo_configuracion.getid()+'",'
+        str_archivo = '{"id":"'+str(archivo_configuracion.getid())+'",'
         str_archivo += '"configuracion":{"servidor":'+servidor_str+',"informes":'+informes_str+'}}'
-        print(str_archivo)
         archivo = open(self.ruta_archivo_configuracion, "w")
         archivo.write(str_archivo)
 
@@ -50,7 +47,8 @@ class ControladorArchivoConfiguracion:
         configuracion = Configuracion()
         configuracion.setservidor(servidor)
         try:
-            archivo_configuracion.setid(datos['id'])
+            if 'id' in datos.keys():
+                archivo_configuracion.setid(datos['id'])
             informes = datos['configuracion']['informes']
             for informe in datos['configuracion']['informes']:
                 informe_cliente = Informe(informe['id'], informe['informacion'], informe['tipo'], informe['hora'])

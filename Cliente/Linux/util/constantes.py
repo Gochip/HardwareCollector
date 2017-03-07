@@ -10,3 +10,6 @@ DISCOS_DUROS = "discos_duros"
 
 #Proceso
 PIDAPP="/var/hcl.pid"
+
+#End of Message
+EOM="\r\n"
