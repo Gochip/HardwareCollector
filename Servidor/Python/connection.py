@@ -121,14 +121,22 @@ class Connection(object):
             json_comando = json.loads(command)
             resultado = None
             comando = json_comando["comando"]
+            print ("nombre de comando: " + comando)
             if comando == MAQUINA_NUEVA:
-                resultado = {}
-                id_maquina = self.maquina_nueva()
-                resultado["comando"] = MAQUINA_REGISTRADA
-                resultado["datos"] = {"id": id_maquina}
-                self.id_maquina = id_maquina
-                print("MAQUINA REGISTRADA")
-                command_status = OK
+                datos = json_comando["datos"]
+                if datos is not None:
+                    resultado = {}
+                    nombre_maquina = datos["nombre_maquina"]
+                    nombre_sistema_operativo = datos["sistema_operativo"]["nombre"]
+                    version_sistema_operativo = datos["sistema_operativo"]["version"]
+                    id_maquina = self.maquina_nueva(nombre_maquina, nombre_sistema_operativo, version_sistema_operativo)
+                    resultado["comando"] = MAQUINA_REGISTRADA
+                    resultado["datos"] = {"id": id_maquina}
+                    self.id_maquina = id_maquina
+                    print("MAQUINA REGISTRADA")
+                    command_status = OK
+                else:
+                    command_status = ERROR
             elif comando == INICIO:
                 datos = json_comando["datos"]
                 if datos is not None:
@@ -138,6 +146,7 @@ class Connection(object):
                     resultado["comando"] = CONFIGURAR
                     resultado["datos"] = {"configuracion": respuesta}
                     print("MAQUINA INICIADA")
+                    
                     # Ejemplo de solicitud de datos tras recibir un comando inicio
                     '''
                     self.id_maquina = datos["id"]
@@ -168,7 +177,8 @@ class Connection(object):
 
                     if id_informe is not None:
                         modo = "pasivo"
-
+                    print("modo: " + modo)
+                    print(id_informe)
                     try:
                         informacion = datos["informacion"]
                         self.informar(modo, id_solicitud, id_informe, informacion)
@@ -348,7 +358,7 @@ class Connection(object):
 
     # COMANDOS DE ENTRADA
 
-    def maquina_nueva(self):
+    def maquina_nueva(self, nombre_maquina, nombre_sistema_operativo, version_sistema_operativo):
         """
             Método que ejecuta el comando MAQUINA_NUEVA.
             Retorna el ID de máquina creada.
@@ -356,8 +366,10 @@ class Connection(object):
         cnx = mysql.connector.connect(user=self.user, password=self.password, database=self.db)
         cursor = cnx.cursor()
 
-        insercion = "INSERT INTO maquinas (fecha_alta, fecha_sincronizacion) VALUES (NOW(), NOW())"
-        cursor.execute(insercion)
+        insercion = ("INSERT INTO maquinas "
+                    "(nombre_maquina, nombre_sistema_operativo, version_sistema_operativo, fecha_alta, fecha_sincronizacion) VALUES "
+                    "(%s, %s, %s, NOW(), NOW())")
+        cursor.execute(insercion, (nombre_maquina, nombre_sistema_operativo, version_sistema_operativo))
         id_maquina_insertado = cursor.lastrowid
 
         id_tipo_informe_inicio_sistema = self.get_tipo_informe('inicio_sistema')
@@ -410,7 +422,10 @@ class Connection(object):
 
     def informar(self, modo, id_solicitud = None, id_informe = None, informacion = []):
         # Siempre debo actualizar la columna "fecha_sincronizacion" de la tabla maquinas.
-        if modo == "activo" and id_solicitud is not None:
+        # Falta considerar los id de informe y solicitud...
+        # Modo pasivo: verificar que el id de informe sea el adecuado
+        # respecto a la información recibida.
+        if ((modo == "activo" and id_solicitud is not None) or True):
             # Modo activo: verificar que el id de solicitud esté en el bufer de solicitudes.
             print ("ID SOLICITUD: ")
             print (id_solicitud)
@@ -484,18 +499,14 @@ class Connection(object):
                             cursor.execute(insercion, (id_componente, self.id_maquina, id_caracteristica, posicion, valor_caracteristica))
                             cnx.commit()
                         posicion += 1
-        elif modo == "pasivo" and id_informe is not None:
-            # Modo pasivo: verificar que el id de informe sea el adecuado
-            # respecto a la información recibida.
-            pass
         else:
             pass
 
 class Solicitud():
 
     def __init__(self):
-        # Genera un id único, tiene en cuenta el tiempo actual + un número aleatorio.
-        self._id = str(time.time()) + str(random.randint(1, 10000))
+        # Genera un id único, tiene en cuenta un número aleatorio (deberia tener en cuenta tambien el timepo). Es necesario ponerse de acuerdo y usar strings en todo los ins informe y solicitud.
+        self._id = random.randint(1, 10000)
         self.informacion = []
 
     def get_id(self):
