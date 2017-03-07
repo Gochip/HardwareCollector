@@ -51,7 +51,7 @@ namespace HardwareCollector.Util
         }
 
         public bool PoseeId() {
-            return this.id != null && this.id.Trim().Length > 0;
+            return this.id != null && this.id.ToString().Trim().Length > 0;
         }
 
     }

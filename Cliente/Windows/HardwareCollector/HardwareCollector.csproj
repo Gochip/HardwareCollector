@@ -76,11 +76,15 @@
     <Compile Include="Conexion\ComandoMaquinaRegistrada.cs" />
     <Compile Include="Conexion\ComandoReportar.cs" />
     <Compile Include="Conexion\ComandoSolicitar.cs" />
+    <Compile Include="Principal\Controlador.cs" />
+    <Compile Include="Excepciones\ConfigurationException.cs" />
+    <Compile Include="Excepciones\ConnectionException.cs" />
     <Compile Include="Recoleccion\Recolector.cs" />
-    <Compile Include="Principal.cs" />
+    <Compile Include="Entrada.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\ControladorArchivoConfiguracion.cs" />
     <Compile Include="Util\ArchivoConfiguracion.cs" />
+    <Compile Include="Util\Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

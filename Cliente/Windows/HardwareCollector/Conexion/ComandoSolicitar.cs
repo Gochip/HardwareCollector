@@ -15,7 +15,7 @@ namespace HardwareCollector.Conexion
         }
         public class Datos
         {
-            public string id_solicitud;
+            public int id_solicitud;
             public List<string> informacion;
         }
     }

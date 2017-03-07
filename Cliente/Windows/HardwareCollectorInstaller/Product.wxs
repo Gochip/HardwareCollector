@@ -44,7 +44,7 @@
                               Vital="yes"
                               Name="HardwareCollectorService"
                               DisplayName="HardwareCollectorService"
-                              Description="(WIX installer) Servicio cliente de HardwareCollector para recuperar datos de hardware de los componentes de las máquinas y enviarlas a un servidor."
+                              Description="Servicio cliente de HardwareCollector para recuperar datos de hardware de los componentes de las máquinas y enviarlas a un servidor."
                               Start="auto"
                               Account="LocalSystem"
                               ErrorControl="critical"
@@ -63,8 +63,13 @@
         </Directory>
       </Directory>
     </Directory>
+    
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    
     <UIRef Id="WixUI_InstallDir" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SolutionDir)\HardwareCollectorInstaller\license.rtf" />
+
     <Feature Id="ProductFeature"
              Title="Titulo de la feature HardwareCollectorService"
              Level="1">
@@ -73,12 +78,18 @@
     
     <Binary Id="actionCrearArchivoConfig" SourceFile="D:\Programacion\Python\HC\HardwareCollector\Cliente\Windows\HardwareCollectorCustomAction\bin\Debug\HardwareCollectorCustomAction.CA.dll" />
     
-    <CustomAction Id="actionCrearArchivoConfigCustomAction" BinaryKey="actionCrearArchivoConfig" DllEntry="CustomActionCrearArchiveConfig"
+    <CustomAction Id="actionCrearArchivoConfigCustomAction" BinaryKey="actionCrearArchivoConfig" DllEntry="CustomActionCrearArchivoConfig"
       Execute="deferred" Return="check" Impersonate="no"/>
+
+    <CustomAction Id="actionBorrarArchivoConfigCustomAction" BinaryKey="actionCrearArchivoConfig" DllEntry="CustomActionBorrarArchivoConfig"
+       Execute="deferred" Return="check" Impersonate="no" />
     
     <InstallExecuteSequence>
       <Custom Action='actionCrearArchivoConfigCustomAction' After='InstallFiles'>
         NOT Installed AND NOT PATCH
+      </Custom>
+    <Custom Action='actionBorrarArchivoConfigCustomAction' After='InstallInitialize'>
+        REMOVE="ALL"
       </Custom>
     </InstallExecuteSequence>
   
