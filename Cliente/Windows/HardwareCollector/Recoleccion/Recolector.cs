@@ -27,8 +27,8 @@ namespace HardwareCollector.Recoleccion
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
             foreach (ManagementObject managementObject in searcher.Get())
             {
-                sistemaOperativo.Nombre = managementObject.GetPropertyValue("caption").ToString();
-                sistemaOperativo.Version = managementObject.GetPropertyValue("version").ToString();
+                sistemaOperativo.Nombre = ReadPropertyValueSafely(managementObject, "caption");
+                sistemaOperativo.Version = ReadPropertyValueSafely(managementObject, "version");
             }
             return sistemaOperativo;
         }
@@ -40,7 +40,7 @@ namespace HardwareCollector.Recoleccion
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
             foreach (ManagementObject managementObject in searcher.Get())
             {
-                nombre = managementObject.GetPropertyValue("csname").ToString();
+                nombre = ReadPropertyValueSafely(managementObject, "csname");
             }
             return nombre;
         }
@@ -53,14 +53,22 @@ namespace HardwareCollector.Recoleccion
             Procesador procesador = new Procesador();
             foreach (ManagementObject managementObject in searcher.Get())
             {
-                procesador.Nombre = managementObject.GetPropertyValue("name").ToString();
-                procesador.Descripcion = managementObject.GetPropertyValue("description").ToString();
-                procesador.Fabricante = managementObject.GetPropertyValue("manufacturer").ToString();
-                procesador.Arquitectura = managementObject.GetPropertyValue("addresswidth").ToString();
-                procesador.CantidadNucleos = Int32.Parse(managementObject.GetPropertyValue("numberofcores").ToString());
-                procesador.CantidadProcesadores = Int32.Parse(managementObject.GetPropertyValue("numberoflogicalprocessors").ToString());
-                procesador.Velocidad = Double.Parse(managementObject.GetPropertyValue("maxclockspeed").ToString());
-                procesador.Cache = Double.Parse(managementObject.GetPropertyValue("l2cachesize").ToString());
+                procesador.Nombre = ReadPropertyValueSafely(managementObject, "name");
+                procesador.Descripcion = ReadPropertyValueSafely(managementObject, "description");
+                procesador.Fabricante = ReadPropertyValueSafely(managementObject, "manufacturer");
+                procesador.Arquitectura = ReadPropertyValueSafely(managementObject, "addresswidth");
+                int numberofcores = 0;
+                if (Int32.TryParse(ReadPropertyValueSafely(managementObject, "numberofcores"), out numberofcores)) { }
+                procesador.CantidadNucleos = numberofcores;
+                int numberoflogicalprocessors = 0;
+                if (Int32.TryParse(ReadPropertyValueSafely(managementObject, "numberoflogicalprocessors"), out numberofcores)) { }
+                procesador.CantidadProcesadores = numberoflogicalprocessors;
+                double maxclockspeed = 0;
+                if (Double.TryParse(ReadPropertyValueSafely(managementObject, "maxclockspeed"), out maxclockspeed)) { }
+                procesador.Velocidad = maxclockspeed;
+                double l2cachesize = 0;
+                if (Double.TryParse(ReadPropertyValueSafely(managementObject, "l2cachesize"), out l2cachesize)) { }
+                procesador.Cache = l2cachesize;
             }
             return procesador;
         }
@@ -74,13 +82,17 @@ namespace HardwareCollector.Recoleccion
             foreach (ManagementObject managementObject in searcher.Get())
             {
                 DiscoDuro discoDuro = new DiscoDuro();
-                discoDuro.Fabricante = managementObject.GetPropertyValue("manufacturer").ToString();
-                discoDuro.Modelo = managementObject.GetPropertyValue("model").ToString();
-                discoDuro.NumeroSerie = managementObject.GetPropertyValue("serialnumber").ToString();
-                discoDuro.TipoInterfaz = managementObject.GetPropertyValue("interfacetype").ToString();
-                discoDuro.Firmware = managementObject.GetPropertyValue("firmwarerevision").ToString();
-                discoDuro.CantidadParticiones = int.Parse(managementObject.GetPropertyValue("partitions").ToString());
-                discoDuro.Capacidad = Double.Parse(managementObject.GetPropertyValue("size").ToString());
+                discoDuro.Fabricante = ReadPropertyValueSafely(managementObject, "manufacturer");
+                discoDuro.Modelo = ReadPropertyValueSafely(managementObject, "model");
+                discoDuro.NumeroSerie = ReadPropertyValueSafely(managementObject, "serialnumber");
+                discoDuro.TipoInterfaz = ReadPropertyValueSafely(managementObject, "interfacetype");
+                discoDuro.Firmware = ReadPropertyValueSafely(managementObject, "firmwarerevision");
+                int partitions = 0;
+                if (Int32.TryParse(ReadPropertyValueSafely(managementObject, "partitions"), out partitions)) { }
+                discoDuro.CantidadParticiones = partitions;
+                double size = 0;
+                if (Double.TryParse(ReadPropertyValueSafely(managementObject, "size"), out size)) { }
+                discoDuro.Capacidad = size;
                 discos.Add(discoDuro);
             }
             return discos;
@@ -89,23 +101,37 @@ namespace HardwareCollector.Recoleccion
         //https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx
         public List<MemoriaRam> GetMemoriasRam()
         {
-            SelectQuery selectQuery = new SelectQuery("SELECT banklabel, memorytype, manufacturer, serialnumber, datawidth, configuredclockspeed, capacity FROM Win32_PhysicalMemory");//diskdrive
+            SelectQuery selectQuery = new SelectQuery("SELECT banklabel, memorytype, manufacturer, serialnumber, datawidth, speed, capacity FROM Win32_PhysicalMemory");//diskdrive
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
             List<MemoriaRam> memorias = new List<MemoriaRam>();
             foreach (ManagementObject managementObject in searcher.Get())
             {
                 MemoriaRam memoria = new MemoriaRam();
-                memoria.Banco = managementObject.GetPropertyValue("banklabel").ToString();
-                memoria.Tecnologia = managementObject.GetPropertyValue("memorytype").ToString();
-                memoria.Fabricante = managementObject.GetPropertyValue("manufacturer").ToString();
-                memoria.NumeroSerie = managementObject.GetPropertyValue("serialnumber").ToString();
-                memoria.TamanioBusDatos = managementObject.GetPropertyValue("datawidth").ToString();
-                //configuredclockspeed puede dar 0 cuando no esta configurado
-                memoria.Velocidad = Double.Parse(managementObject.GetPropertyValue("configuredclockspeed").ToString());
-                memoria.Capacidad = Double.Parse(managementObject.GetPropertyValue("capacity").ToString());
+                memoria.Banco = ReadPropertyValueSafely(managementObject, "banklabel");
+                memoria.Tecnologia = ReadPropertyValueSafely(managementObject, "memorytype");
+                memoria.Fabricante = ReadPropertyValueSafely(managementObject, "manufacturer");
+                memoria.NumeroSerie = ReadPropertyValueSafely(managementObject, "serialnumber");
+                memoria.TamanioBusDatos = ReadPropertyValueSafely(managementObject, "datawidth");
+                //configuredclockspeed fue cambiado a speed porque versiones anteriores de windows 10 no lo soportan: 
+                double speed = 0;
+                if (Double.TryParse(ReadPropertyValueSafely(managementObject, "speed"), out speed)) { }
+                memoria.Velocidad = speed;
+                double capacity = 0;
+                if (Double.TryParse(ReadPropertyValueSafely(managementObject, "capacity"), out capacity)) { }
+                memoria.Capacidad = capacity;
                 memorias.Add(memoria);
             }
             return memorias;
         }
+
+        private string ReadPropertyValueSafely(ManagementObject managementObject, string propertyName) {
+            string resultado = "";
+            if (managementObject.GetPropertyValue(propertyName) != null)
+            {
+                resultado = managementObject.GetPropertyValue(propertyName).ToString();
+            }
+            return resultado;
+        }
+
     }
 }

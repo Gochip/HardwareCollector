@@ -157,7 +157,12 @@ namespace HardwareCollector.Principal
                 if (informe.tipo == "inicio_sistema")
                 {
                     log("ID INFORME: " + informe.id);
-                    log("INFORMACION DE INFORME: " + informe.informacion.ToString());
+                    string info = "";
+                    for(int a = 0;a< informe.informacion.Count; a++)
+                    {
+                        info += informe.informacion[a] + ",";
+                    }
+                    log("INFORMACION DE INFORME: "+ info);
                     ComandoInformar comandoInformar = ArmarComandoInformar(ModoFuncionamiento.Pasivo, informe.id, informe.informacion);
                     log("ENVIO COMANDO INFORMAR");
                     cliente.enviarComando(comandoInformar);
@@ -193,22 +198,37 @@ namespace HardwareCollector.Principal
         }
 
         private ComandoInformar ArmarComandoInformar(ModoFuncionamiento modoFuncinamiento, int idInformeOSolicitud, List<string> informacionSolicitada) {
+            log("En armado informar");
             ComandoInformar comandoInformar = new ComandoInformar();
             if (modoFuncinamiento == ModoFuncionamiento.Activo)
             {
                 comandoInformar.datos.id_solicitud = idInformeOSolicitud;
+                log("Modo activo");
             }
             else if (modoFuncinamiento == ModoFuncionamiento.Pasivo) {
                 comandoInformar.datos.id_informe = idInformeOSolicitud;
+                log("Modo pasivo");
             }
+            log("idInformeOSolicitud: " + idInformeOSolicitud);
             List<ComandoInformar.ElementoInformacion> informacionInformar = new List<ComandoInformar.ElementoInformacion>();
+            log("Cree informacionInformar");
             Recolector recolector = new Recolector();
+            log("Cree Recolector");
             //por defecto pido toda la maquina, es ineficiente
-            Maquina maquina = recolector.GetMaquina();
+            //Maquina maquina = recolector.GetMaquina();
+            Maquina maquina = new Maquina();
+
+            maquina.Procesador = recolector.GetProcesador();
+            log("obtengo procesador");
+            maquina.DiscosDuros = recolector.GetDiscosDuros();
+            log("obtengo discos");
+            maquina.MemoriasRam = recolector.GetMemoriasRam();
+            log("obtengo GetMemoriasRam");
             for (int i = 0; i < informacionSolicitada.Count; i++)
             {
                 if (informacionSolicitada[i] == "procesador")
                 {
+                    log("Busco procesador");
                     Procesador procesador = maquina.Procesador;
                     ComandoInformar.ElementoProcesador elementoProcesador = new ComandoInformar.ElementoProcesador();
                     ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.datos).nombre = procesador.Nombre;
@@ -219,13 +239,16 @@ namespace HardwareCollector.Principal
                     ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.datos).velocidad = procesador.Velocidad.ToString();
                     ((ComandoInformar.DatosInformacionProcesador)elementoProcesador.datos).tamanio_cache = procesador.Cache.ToString();
                     informacionInformar.Add(elementoProcesador);
+                    log("Agrego procesador");
                 }
                 else if (informacionSolicitada[i] == "memorias_ram")
                 {
                     List<MemoriaRam> memorias = maquina.MemoriasRam;
                     ComandoInformar.ElementoMemoria elementoMemoria = new ComandoInformar.ElementoMemoria();
+                    log("Busco rams");
                     foreach (MemoriaRam memoria in memorias)
                     {
+                        log("Busco ram");
                         ComandoInformar.DatosInformacionMemoriasRam dato = new ComandoInformar.DatosInformacionMemoriasRam();
                         dato.banco = memoria.Banco;
                         dato.tecnologia = memoria.Tecnologia;
@@ -235,15 +258,18 @@ namespace HardwareCollector.Principal
                         dato.velocidad = memoria.Velocidad.ToString();
                         dato.tamanio = memoria.Capacidad.ToString();
                         elementoMemoria.datos.Add(dato);
+                        log("Agrego ram");
                     }
                     informacionInformar.Add(elementoMemoria);
                 }
                 else if (informacionSolicitada[i] == "discos_duros")
                 {
+                    log("Busco discos");
                     List<DiscoDuro> discos = maquina.DiscosDuros;
                     ComandoInformar.ElementoDiscoDuro elemento = new ComandoInformar.ElementoDiscoDuro();
                     foreach (DiscoDuro disco in discos)
                     {
+                        log("Busco disco");
                         ComandoInformar.DatosInformacionDiscosDuros dato = new ComandoInformar.DatosInformacionDiscosDuros();
                         dato.fabricante = disco.Fabricante;
                         dato.modelo = disco.Modelo;
@@ -253,6 +279,7 @@ namespace HardwareCollector.Principal
                         dato.cantidad_particiones = disco.CantidadParticiones;
                         dato.tamanio = disco.Capacidad.ToString();
                         elemento.datos.Add(dato);
+                        log("Agrego disco");
                     }
                     informacionInformar.Add(elemento);
                 }

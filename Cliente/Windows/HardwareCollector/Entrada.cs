@@ -20,14 +20,22 @@ namespace HardwareCollector
         //https://msdn.microsoft.com/en-us/library/aa390887(v=vs.85).aspx
         public static void Main()
         {
+            /*
             controlador = new Controlador("d:\\logs.txt");
             controlador.Trabajar();
+            */
+            
+            ConsultarDatosClaseWMI("Win32_OperatingSystem");
             Console.ReadLine();
         }
 
         private static void ConsultarDatosClaseWMI(String NombreClase)
         {
-            SelectQuery selectQuery = new SelectQuery("SELECT * FROM " + NombreClase);
+            //SelectQuery selectQuery = new SelectQuery("SELECT * FROM " + NombreClase);
+            string proc = "SELECT addresswidth, manufacturer, name, description, numberofcores, numberoflogicalprocessors, maxclockspeed, l2cachesize FROM Win32_Processor";
+            string disc = "SELECT manufacturer, model, size, serialnumber, firmwarerevision, interfacetype, partitions FROM Win32_DiskDrive";
+            string mem = "SELECT banklabel, memorytype, manufacturer, serialnumber, datawidth, configuredclockspeed, capacity, speed FROM Win32_PhysicalMemory";
+            SelectQuery selectQuery = new SelectQuery(mem);
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(selectQuery);
             foreach (ManagementObject managementObject in searcher.Get())
             {

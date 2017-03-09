@@ -16,7 +16,7 @@ namespace HardwareCollectorCustomAction
             {
                 FileStream file = File.Open("C:\\config_hc.json", FileMode.Create);
                 StreamWriter fileWriter = new StreamWriter(file);
-                fileWriter.WriteLine("{'configuracion':{'informes':null,'servidor':{'ip':'192.168.27.101','puerto':30330}}}");
+                fileWriter.WriteLine("{'configuracion':{'informes':null,'servidor':{'ip':'172.16.8.13','puerto':30330}}}");
                 fileWriter.Close();
             }
             catch (Exception ex)
