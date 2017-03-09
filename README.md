@@ -37,6 +37,7 @@ La solución consta de 4 proyectos:
 ### Requerimientos ###
 
 * Windows 7 o posterior (WMI no viene incluido en Windows XP ni Vista)
+* .NET Framework instalado (versión 4.0 en adelante)
 
 ### Cómo instalarlo ###
 
