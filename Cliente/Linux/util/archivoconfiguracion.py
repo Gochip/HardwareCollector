@@ -87,7 +87,7 @@ class Informe:
     def getid(self):
         return self.id
 
-    def getinfomacion(self):
+    def getinformacion(self):
         return self.informacion
 
     def gettipo(self):

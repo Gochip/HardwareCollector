@@ -3,6 +3,7 @@
 import json as json
 import os.path as path
 from .archivoconfiguracion import *
+from util.excepciones import *
 
 class ControladorArchivoConfiguracion:
 
@@ -40,22 +41,31 @@ class ControladorArchivoConfiguracion:
 
     @classmethod
     def leer_archivo(self):
-        texto_archivo = self.leer_archivo_como_texto()  
-        datos = json.loads(texto_archivo)
+        msj = "config.json: Archivo corrupto o mal configurados"
+        texto_archivo = self.leer_archivo_como_texto()
+        try: 
+            datos = json.loads(texto_archivo)
+        except: 
+            e = Excepcion(msj)
+            raise e
         archivo_configuracion = ArchivoConfiguracion()
-        servidor = Servidor(**datos['configuracion']['servidor'])
+        try:
+            servidor = Servidor(**datos['configuracion']['servidor'])
+        except:
+            e = Excepcion(msj)
+            raise e            
         configuracion = Configuracion()
         configuracion.setservidor(servidor)
         try:
-            if 'id' in datos.keys():
-                archivo_configuracion.setid(datos['id'])
+            archivo_configuracion.setid(datos['id'])
+        except KeyError:
+            pass
+        try:
             informes = datos['configuracion']['informes']
             for informe in datos['configuracion']['informes']:
                 informe_cliente = Informe(informe['id'], informe['informacion'], informe['tipo'], informe['hora'])
                 configuracion.add_informe(informe_cliente)        
-        except KeyError:
-            print("ARCHIVO CORRUPTO")
-        except TypeError:
-            print("ARCHIVO SIN CONFIGURACIÓN COMPLETA")
+        except:
+            pass
         archivo_configuracion.setconfiguracion(configuracion)            
         return archivo_configuracion

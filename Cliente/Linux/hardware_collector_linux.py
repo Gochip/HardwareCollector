@@ -1,9 +1,52 @@
 #!/usr/bin/env python3
 #encoding: UTF-8
 
+def recolectar(informacion_solicitada):
+    informacion_informar = [] # ComandoInformar.ElementoInfomacion
+    recolector = Collector()
+    maquina = recolector.get_maquina()
+    for i in range(0,len(informacion_solicitada)):
+        if informacion_solicitada[i] == PROCESADOR:
+            procesador = maquina.getprocesador()
+            elemento_procesador = ComandoInformar.ElementoProcesador()
+            elemento_procesador.get_datos().actualizar_datos(procesador)
+            informacion_informar.append(elemento_procesador)
+        elif informacion_solicitada[i] == MEMORIAS_RAM:
+            memorias_ram = maquina.getmemoriasram()
+            elemento_memorias_ram = ComandoInformar.ElementoMemoriasRam()
+            datos_memorias = []
+            for i in range(0,len(memorias_ram)):
+                memoria_datos = ComandoInformar.DatosInformacionMemoriasRam()
+                memoria_datos.actualizar_datos(memorias_ram[i])
+                datos_memorias.append(memoria_datos)
+            elemento_memorias_ram.set_datos(datos_memorias)
+            informacion_informar.append(elemento_memorias_ram)
+        elif informacion_solicitada[i] == DISCOS_DUROS:
+            discos_duros = maquina.getdiscosduros()
+            elemento_discos_duros = ComandoInformar.ElementoDiscosDuros()
+            datos_discos = []
+            for i in range(0,len(discos_duros)):
+                disco_datos = ComandoInformar.DatosInformacionDiscosDuros()
+                disco_datos.actualizar_datos(discos_duros[i])
+                datos_discos.append(disco_datos)
+            elemento_discos_duros.set_datos(datos_discos)
+            informacion_informar.append(elemento_discos_duros)
+    return informacion_informar
+
+def generar_cmds_informar(informes):
+    cmds_informar = []
+    for informe in informes:
+        if informe.gettipo() == "inicio_sistema":
+            info_solicitada = informe.getinformacion()
+            cmd_informar = ComandoInformar()
+            cmd_informar.datos.set_id_informe(informe.getid())
+            informacion_informar = recolectar(info_solicitada);
+            cmd_informar.datos.set_informacion(informacion_informar)
+            cmds_informar.append(cmd_informar)
+    return cmds_informar
+
 if __name__ == "__main__":
     import sys
-    import os
     from recoleccion.collector import Collector
     from util.controladorarchivoconfiguracion import ControladorArchivoConfiguracion
     from util.excepciones import *
@@ -19,13 +62,9 @@ if __name__ == "__main__":
     from conexion.comando_solicitar import ComandoSolicitar
 
 try:
-    pid = os.getpid()
-    op = open(PIDAPP,"w")
-    op.write("%s" % pid)
-    op.close()
     cliente = None
     if (ControladorArchivoConfiguracion.existe_archivo()):
-        archivo = ControladorArchivoConfiguracion.leer_archivo()        
+        archivo = ControladorArchivoConfiguracion.leer_archivo()
         cliente = Cliente()
         cliente.set_ip_servidor(archivo.getconfiguracion().getservidor().getip())
         cliente.set_puerto(archivo.getconfiguracion().getservidor().getpuerto())            
@@ -46,7 +85,7 @@ try:
             datos_cmd_inicio.set_id(archivo.getid())
             cmd_inicio.set_datos(datos_cmd_inicio)
             cliente.enviar_comando(cmd_inicio)
-            print("inicio")
+            print("INICIO")
             #ya está en funcionamiento
         else:
             #Ya tiene asignada IP y comienza a trabajar
@@ -55,60 +94,40 @@ try:
             datos_cmd_inicio.set_id(archivo.getid())
             cmd_inicio.set_datos(datos_cmd_inicio)
             cliente.enviar_comando(cmd_inicio)
+            #enviar informes
+            archivo = ControladorArchivoConfiguracion.leer_archivo()
+            cmds_informar = generar_cmds_informar(archivo.getconfiguracion().getinformes())
+            for cmd_informar in cmds_informar:
+                cliente.enviar_comando(cmd_informar)
             #ya está en funcionamiento    
         while (True):
             print("EN FUNCIONAMIENTO")
             cmd = cliente.recibir_comando()
             if (type(cmd) is ComandoConfigurar):
-                print("RECIBO COMANDO CONFIGURAR, CONFIGURACIÓN RECIBIDA");
                 #piso la configuracion actual, solo informes, del cliente.
                 cmd_configurar = cmd
                 informes = cmd_configurar.get_datos().get_configuracion().getconfiguracion().getinformes()
                 archivo.getconfiguracion().setinformes(informes)
                 ControladorArchivoConfiguracion.escribir_archivo(archivo)
+                print("RECIBO COMANDO CONFIGURAR, RECIBE CONFIGURACIÓN");
+                #enviar informes
+                archivo = ControladorArchivoConfiguracion.leer_archivo()
+                cmds_informar = generar_cmds_informar(archivo.getconfiguracion().getinformes())
+                for cmd_informar in cmds_informar:
+                    cliente.enviar_comando(cmd_informar)
             elif (type(cmd) is ComandoSolicitar):
                 print("RECIBO COMANDO SOLICITAR, ENVÍO DE INFORME");
                 cmd_solicitar = cmd
                 cmd_informar = ComandoInformar()
                 cmd_informar.datos.set_id_solicitud(cmd_solicitar.get_datos().get_id_solicitud())
-                informacion_solicitada = cmd_solicitar.get_datos().get_informacion()
-                informacion_informar = [] # ComandoInformar.ElementoInfomacion
-                recolector = Collector()
-                maquina = recolector.get_maquina()
-                for i in range(0,len(informacion_solicitada)):
-                    if informacion_solicitada[i] == PROCESADOR:
-                        procesador = maquina.getprocesador()
-                        elemento_procesador = ComandoInformar.ElementoProcesador()
-                        elemento_procesador.get_datos().actualizar_datos(procesador)
-                        informacion_informar.append(elemento_procesador)
-                    elif informacion_solicitada[i] == MEMORIAS_RAM:
-                        memorias_ram = maquina.getmemoriasram()
-                        elemento_memorias_ram = ComandoInformar.ElementoMemoriasRam()
-                        datos_memorias = []
-                        for i in range(0,len(memorias_ram)):
-                            memoria_datos = ComandoInformar.DatosInformacionMemoriasRam()
-                            memoria_datos.actualizar_datos(memorias_ram[i])
-                            datos_memorias.append(memoria_datos)
-                        elemento_memorias_ram.set_datos(datos_memorias)
-                        informacion_informar.append(elemento_memorias_ram)
-                    elif informacion_solicitada[i] == DISCOS_DUROS:
-                        discos_duros = maquina.getdiscosduros()
-                        elemento_discos_duros = ComandoInformar.ElementoDiscosDuros()
-                        datos_discos = []
-                        for i in range(0,len(discos_duros)):
-                            disco_datos = ComandoInformar.DatosInformacionDiscosDuros()
-                            disco_datos.actualizar_datos(discos_duros[i])
-                            datos_discos.append(disco_datos)
-                        elemento_discos_duros.set_datos(datos_discos)
-                        informacion_informar.append(elemento_discos_duros)
+                info_solicitada = cmd_solicitar.get_datos().get_informacion()
+                informacion_informar = recolectar(info_solicitada);
                 cmd_informar.datos.set_informacion(informacion_informar)
                 cliente.enviar_comando(cmd_informar)
     else:
         #si o si debe existir el archivo con la direccion del servidor, sino no puede contectarse...termina
         e = Excepcion("config.json: No existe archivo de configuración")
         raise e
-except ExcepcionSubprocess:
-    print("\nOps, no se consiguieron datos del procesador ni las memorias. Sugerencias:\nNECSITA PERMISOS DE SUPERUSUARIO\nNO TIENE INSTALADO DMIDECODE")
 except ExcepcionFileIO as e:
     print(e._url + ': ' +e._mensaje )
 except PermissionError:

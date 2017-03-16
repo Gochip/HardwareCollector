@@ -55,7 +55,6 @@ class Collector():
                             memoria.settecnologia(self.limpiar_string(dato.split(': ')[1]))
                     memorias.append(memoria)                              
         except subprocess.CalledProcessError:
-#            raise ExcepcionSubprocess
             pass
         return memorias
     

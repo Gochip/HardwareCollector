@@ -33,5 +33,4 @@ class ComandoMaquinaNueva(Comando):
         self.datos.sistema_operativo = datos_so
         datos = self.datos.__dict__
         self.datos = datos
-        print(self)
         return json.dumps(self.__dict__)

@@ -36,7 +36,7 @@ class Connection(object):
         self.output = ""
         self.input = ""
         self.user = "root"
-        self.password = "12345678"
+        self.password = "toor"
         self.db = "hc_bd"
         self.id_maquina = None
         self.solicitudes = []
