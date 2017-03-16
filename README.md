@@ -1,4 +1,5 @@
 # HardwareCollector
+#### Laboratorio de Sistemas. UTN FRC ####
 
 El HardwareCollector permite la recolección de datos de computadoras de un laboratorio informático. Está compuesto por un programa cliente y un servidor.
 
@@ -51,6 +52,22 @@ El servicio se llama "HardwareCollectorService" y puede ser consultador con el p
 
 Caulquier error durante la instalación o desinstalación puede ser consultada ingresando en "Visor de envetos>Registro de Windows>Aplicación".
 
+## Cliente Linux ##
+
+Desarrollado en Python3 y se encuentra en el directorio Cliente/Linux.
+
+Para ejecutarlo:
+
+1. Verificar que se tenga instalado dmidecode.
+2. Verificar que en el sistema tenga los siguientes módulos de python instalados, 
+de lo contrario instalarlos:
+    * platform
+    * subprocess
+    * ipaddress
+    * socket
+    * json
+3. Ejecutarlo con permisos de superusuario: 
+    *  Linux Ubuntu: sudo python3 hardware_collector_linux.py
 
 
 
