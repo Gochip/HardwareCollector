@@ -54,7 +54,7 @@ Caulquier error durante la instalación o desinstalación puede ser consultada i
 
 ## Cliente Linux ##
 
-Desarrollado en Python3 y se encuentra en el directorio Cliente/Linux.
+Desarrollado en Python 3.4.3 y se encuentra en el directorio Cliente/Linux.
 
 Para ejecutarlo:
 
