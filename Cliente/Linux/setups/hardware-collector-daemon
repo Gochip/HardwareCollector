@@ -1,17 +1,28 @@
 #!/bin/sh
 PATHAPP="/usr/share/hardware-collector-linux/hardware_collector_linux.py" #se ejecuta en background
-PIDAPP="/var/hcl.pid"
+PIDAPP="/var/run/hcl.pid"
+APP="hardware collector"
 case $1 in
         start)
                 echo 'starting - iniciando'
-                $(start-stop-daemon --start --background --pidfile $PIDAPP --make-pidfile --exec $PATHAPP)
+                python3 $PATHAPP &
+                echo $!>$PIDAPP
                 echo 'started - iniciado'
         ;;
         stop)
                 echo 'stoping - deteniendo'
-                echo $(cat $PIDAPP)
                 PID=`cat $PIDAPP`
                 kill -9 $PID
                 echo 'stopped - detenido'
         ;;
+        status)
+           if [ -e $PIDAPP ]; then
+              echo $APP is running, pid=`cat $PIDAPP`
+           else
+              echo $APP is NOT running
+              exit 1
+           fi
+           ;;
+        *)
+           echo "Usage: $0 {start|stop|status}"
 esac

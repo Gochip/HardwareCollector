@@ -47,7 +47,7 @@ class Cliente:
             self._socket.connect(server)
         except:
             e = Excepcion("Conexión rechazada")
-            e.add_posible_solucion("Servidor correto?")
+            e.add_posible_solucion("Servidor corretto?")
             e.add_posible_solucion("Puerto correcto?")
             e.add_posible_solucion("Servidor levantado?")
             raise e
