@@ -84,8 +84,8 @@ class Collector():
                 posibles_discos.append(posibles_discos[i])
         posibles_discos = posibles_discos[inicial_posibles_discos:]
 
-        for d in posibles_discos:            
-            datos = subprocess.check_output(['/sbin/udevadm', 'info', '--query=property', '--name=' + d[0]]).decode('UTF-8')
+        for posible_disco in posibles_discos:            
+            datos = subprocess.check_output(['/sbin/udevadm', 'info', '--query=property', '--name=' + posible_disco[0]]).decode('UTF-8')
             datosdiscoduro = datos.split('\n')
             disco = None
             for linea in datosdiscoduro:
@@ -105,10 +105,10 @@ class Collector():
                         disco.settipointerfaz(linea.split('=')[1])
             if disco is not None:
                 url_fabricante = '/sys/class/block/' #{nombre}/device/vendor
-                url_fabricante += d[0] + '/device/vendor'
+                url_fabricante += posible_disco[0] + '/device/vendor'
                 disco.setfabricante((subprocess.check_output(['cat', url_fabricante ]).decode('UTF-8').split('\n')[0]).strip())
-                disco.setcantidadparticiones(d[3])
-                disco.settamanio(d[2])
+                disco.setcantidadparticiones(posible_disco[3])
+                disco.settamanio(posible_disco[2])
                 discos_duro.append(disco)
         return discos_duro
     
@@ -174,26 +174,34 @@ class Collector():
                     procesador_fisico['cache size'] = self.obtener_valor(proc,': ',1)
                 elif proc.startswith('cpu cores\t:'):
                     procesador_fisico['cpu cores'] = self.obtener_valor(proc,': ',1)
-            _procesador.setfabricante(procesador_fisico['vendor_id'])
-            _procesador.setnombre(procesador_fisico['model name'])
-            _procesador.setdescripcion(procesador_fisico['model name'])
-            _procesador.settamaniocache(procesador_fisico['cache size'])#KB
-            _procesador.setcantidadnucleos(int(procesador_fisico['cpu cores']))
+            try:
+                _procesador.setfabricante(procesador_fisico['vendor_id'])
+                _procesador.setnombre(procesador_fisico['model name'])
+                _procesador.setdescripcion(procesador_fisico['model name'])
+                _procesador.settamaniocache(procesador_fisico['cache size'])#KB
+                _procesador.setcantidadnucleos(int(procesador_fisico['cpu cores']))
+            except:
+                pass
         if procesadores_logicos is not None:
-            for proc in procesadores_logicos:
-                if proc.find('\nphysical id\t: '+procesador_fisico['physical id']+'\n') != -1:
-                    cantidad_procesadores += 1
+            try:
+                for proc in procesadores_logicos:
+                    if proc.find('\nphysical id\t: '+procesador_fisico['physical id']+'\n') != -1:
+                        cantidad_procesadores += 1
+            except:
+                pass
         if cantidad_procesadores != 0:
             _procesador.setcantidadprocesadores(cantidad_procesadores)
+        else:
+            _procesador.setcantidadprocesadores(1)
         _procesador.setarquitectura(platform.architecture()[0])
-        url_archivo_max_velocidad += procesador_fisico['processor'] + '/cpufreq/scaling_max_freq'
         try:
+            url_archivo_max_velocidad += procesador_fisico['processor'] + '/cpufreq/scaling_max_freq'
             archivo_max_velocidad = open(url_archivo_max_velocidad, 'r')#en Khz
             velocidad = (float(archivo_max_velocidad.readline())/1000) #Mhz
             _procesador.setvelocidad(self.limpiar_string(str(velocidad)))
             archivo_max_velocidad.close()
-        except (IOError, FileNotFoundError):
-            pass #raise ExcepcionFileIO(url_archivo_max_velocidad)
+        except:
+            pass
         return _procesador
 
     def limpiar_string(self, valor):

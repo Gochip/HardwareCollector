@@ -1,3 +1,4 @@
+#coding:utf-8
 import socket as sk
 from conexion.comando import Comando
 from conexion.comando_configurar import ComandoConfigurar
@@ -46,7 +47,7 @@ class Cliente:
         try:
             self._socket.connect(server)
         except:
-            e = Excepcion("Conexión rechazada")
+            e = Excepcion("Conexión rechazada:")
             e.add_posible_solucion("Servidor corretto?")
             e.add_posible_solucion("Puerto correcto?")
             e.add_posible_solucion("Servidor levantado?")

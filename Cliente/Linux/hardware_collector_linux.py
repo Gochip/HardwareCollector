@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#encoding: UTF-8
+#coding:utf-8
 
 def recolectar(informacion_solicitada):
     informacion_informar = [] # ComandoInformar.ElementoInfomacion
@@ -85,7 +85,7 @@ try:
             datos_cmd_inicio.set_id(archivo.getid())
             cmd_inicio.set_datos(datos_cmd_inicio)
             cliente.enviar_comando(cmd_inicio)
-            print("INICIO")
+            #print("INICIO")
             #ya está en funcionamiento
         else:
             #Ya tiene asignada IP y comienza a trabajar
@@ -109,14 +109,14 @@ try:
                 informes = cmd_configurar.get_datos().get_configuracion().getconfiguracion().getinformes()
                 archivo.getconfiguracion().setinformes(informes)
                 ControladorArchivoConfiguracion.escribir_archivo(archivo)
-                print("RECIBO COMANDO CONFIGURAR, RECIBE CONFIGURACIÓN");
+                #print("RECIBO COMANDO CONFIGURAR, RECIBE CONFIGURACIÓN");
                 #enviar informes
                 archivo = ControladorArchivoConfiguracion.leer_archivo()
                 cmds_informar = generar_cmds_informar(archivo.getconfiguracion().getinformes())
                 for cmd_informar in cmds_informar:
                     cliente.enviar_comando(cmd_informar)
             elif (type(cmd) is ComandoSolicitar):
-                print("RECIBO COMANDO SOLICITAR, ENVÍO DE INFORME");
+                #print("RECIBO COMANDO SOLICITAR, ENVÍO DE INFORME");
                 cmd_solicitar = cmd
                 cmd_informar = ComandoInformar()
                 cmd_informar.datos.set_id_solicitud(cmd_solicitar.get_datos().get_id_solicitud())
