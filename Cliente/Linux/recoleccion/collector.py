@@ -43,17 +43,24 @@ class Collector():
                             memoria.setbanco(self.limpiar_string(dato.split(': ')[1]))
                         elif(dato.startswith('Manufacturer:')):
                             memoria.setfabricante(self.limpiar_string(dato.split(': ')[1]))
+                        elif(dato.startswith('Speed: Unknown')):
+                            memoria = None
+                            break;
                         elif(dato.startswith('Speed:')):
                             memoria.setvelocidad(self.limpiar_string(dato.split(': ')[1]))
                         elif(dato.startswith('Serial Number:')):
                             memoria.setnumeroserie(self.limpiar_string(dato.split(': ')[1]))
                         elif(dato.startswith('Data Width:')):
                             memoria.settamaniobusdatos(self.limpiar_string(dato.split(': ')[1]))
+                        elif(dato.startswith('Size: No Module Installed')):
+                            memoria = None
+                            break;
                         elif(dato.startswith('Size:')):
                             memoria.settamanio(self.limpiar_string(dato.split(': ')[1]))
                         elif(dato.startswith('Form Factor:')):
                             memoria.settecnologia(self.limpiar_string(dato.split(': ')[1]))
-                    memorias.append(memoria)                              
+                    if memoria is not None:
+                        memorias.append(memoria)                              
         except subprocess.CalledProcessError:
             pass
         return memorias
