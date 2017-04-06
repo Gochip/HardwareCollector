@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 import socket as sk
 from conexion.comando import Comando
 from conexion.comando_configurar import ComandoConfigurar
