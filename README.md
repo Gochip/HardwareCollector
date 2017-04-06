@@ -1,5 +1,5 @@
 # HardwareCollector
-#### Laboratorio de Sistemas. UTN FRC ####
+Este proyecto es realizado en el Laboratorio de Sistemas, UTN FRC.
 
 El HardwareCollector permite la recolección de datos de computadoras de un laboratorio informático. Está compuesto por un programa cliente y un servidor.
 
@@ -59,10 +59,10 @@ Desarrollado en Python 3.4.3 y se encuentra en el directorio Cliente/Linux.
 Para ejecutarlo:
 
 1. Instalar dmidecode.
-    1.1. sudo apt-get install dmidecode
-    1.2. Para verificar si dmidecode se instaló correctamente ejecutar dmidecode -V y debe aparecer la versión de dmidecode
-2. Configurar archivo Cliente/Linux/config.json, debe contener: {"configuracion":{"servidor":{"ip": "IP_SERVIDOR", "puerto": PUERTO_SERVIDOR}}}
-    4.1. IP_SERVIDOR y PUERTO_SERVIDOR deben ser reemplazados por sus correspondientes valores. El PUERTO_SERVIDOR es 30330 si no se designó otro puerto en el Servidor de  Hardware Collector
+    1.1. sudo apt-get install dmidecode.
+    1.2. Para verificar si dmidecode se instaló correctamente ejecutar dmidecode -V y debe aparecer la versión de dmidecode.
+2. Configurar archivo Cliente/Linux/config.json, el cual, debe contener: {"configuracion":{"servidor":{"ip": "IP_SERVIDOR", "puerto": PUERTO_SERVIDOR}}}.
+    2.1. IP_SERVIDOR y PUERTO_SERVIDOR deben ser reemplazados por sus correspondientes valores. El PUERTO_SERVIDOR es 30330 si no se designó otro puerto en el Servidor de  Hardware Collector.
 3. Ejecutarlo con permisos de superusuario: 
     * Linux Ubuntu: sudo python3 hardware_collector_linux.py &
 
