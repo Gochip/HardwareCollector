@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-#coding:utf-8
+# coding:utf-8
+
 
 def recolectar(informacion_solicitada):
-    informacion_informar = [] # ComandoInformar.ElementoInfomacion
+    informacion_informar = []  # ComandoInformar.ElementoInfomacion
     recolector = Collector()
     maquina = recolector.get_maquina()
-    for i in range(0,len(informacion_solicitada)):
+    for i in range(0, len(informacion_solicitada)):
         if informacion_solicitada[i] == PROCESADOR:
             procesador = maquina.getprocesador()
             elemento_procesador = ComandoInformar.ElementoProcesador()
