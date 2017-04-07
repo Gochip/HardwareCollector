@@ -63,6 +63,7 @@ class Cliente:
         bytes_enviados = 0
         while bytes_enviados < tamanio_msj:
             try:
+                mensaje_restante = mensaje_bytes[bytes_enviados:]
                 bytes_enviados = self._socket.send(mensaje_bytes)
             except InterruptedError:
                 pass #llamada al sistema interrumpida
@@ -74,9 +75,7 @@ class Cliente:
     def recibir(self):
         max_datos = 1024
         datos = self._socket.recv(max_datos)   #en bytes
-#        datos = b'{"comando": "maquina_registrada", "datos": {"id":"321"}}'
-#        datos = b'{"comando": "configurar", "datos": {"configuracion":{"servidor": {"ip": "127.0.0.1", "puerto": 30303}, "informes": [{"id": "prueba_cliente_linux", "informacion": ["procesador", "memorias_ram", "discos_duros"], "tipo": "programado", "hora": "2015-08-15 20:40:00"}]}}}'
-#        datos = b'{"comando":"solicitar", "datos": {"id_solicitud":"121", "informacion":["procesador", "memorias_ram","discos_duros"]}}'
+        print(datos)
         if datos == b'':
             raise RuntimeError
         mensaje = datos.decode(encoding='ascii') #string
@@ -103,17 +102,14 @@ class Cliente:
         return cmd_recibido
 
     def desconectar(self):
-        if (self._socket != None):
+        if (self._socket is not None):
             self._socket.shutdown(sk.SHUT_RDWR)
             self._socket.close() 
     
     def es_direccion_ip_valida(self, valor):
-        """Verifica que la dirección pasada como valor no contenga
-            solo números, ni espacios. De lo contrario devuelve
-            False."""
-        if valor.isdigit():
-            return False
+        """Verifica que la dirección pasada como valor no contenga solo números,
+            ni espacios. De lo contrario devuelve False."""
         for caracter in valor:
             if caracter.isspace():
                 return False
-        return True
+        return not valor.isdigit();
