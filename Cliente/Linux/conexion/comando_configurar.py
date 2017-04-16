@@ -1,10 +1,10 @@
 from conexion.comando import Comando
-from util.archivoconfiguracion import *
+from util.archivo_configuracion import *
 import json
 
 class ComandoConfigurar(Comando):
     
-    datos = None
+    #datos = None
     
     def __init__(self):
         super().__init__("configurar")
@@ -15,6 +15,9 @@ class ComandoConfigurar(Comando):
 
     def get_datos(self):
         return self.datos
+
+    def get_informes(self):
+        return self.datos.configuracion.get_configuracion().get_informes()
 
     class Datos:
         def __init__(self):
@@ -39,12 +42,12 @@ class ComandoConfigurar(Comando):
         informes_conf = []
         try:
             informes = comando['datos']['configuracion']['configuracion']['informes']
-            for i in range(0,len(informes)):
+            for i in range(0, len(informes)):
                 informes_conf.append((Informe(**informes[i])))
         except KeyError:
-            print("ERROR EN LA DESERIALIZACIÓN DE CONFIGURAR")
-        configuracion.setinformes(informes_conf)
-        archivo.setconfiguracion(configuracion)
+            pass
+        configuracion.set_informes(informes_conf)
+        archivo.set_configuracion(configuracion)
         datos.set_configuracion(archivo)
         comando_respuesta.set_datos(datos)
         return comando_respuesta

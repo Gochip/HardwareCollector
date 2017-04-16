@@ -1,151 +1,60 @@
 #!/usr/bin/env python3
 # coding:utf-8
-
-
-def recolectar(informacion_solicitada):
-    informacion_informar = []  # ComandoInformar.ElementoInfomacion
-    recolector = Collector()
-    maquina = recolector.get_maquina()
-    for i in range(0, len(informacion_solicitada)):
-        if informacion_solicitada[i] == PROCESADOR:
-            procesador = maquina.getprocesador()
-            elemento_procesador = ComandoInformar.ElementoProcesador()
-            elemento_procesador.get_datos().actualizar_datos(procesador)
-            informacion_informar.append(elemento_procesador)
-        elif informacion_solicitada[i] == MEMORIAS_RAM:
-            memorias_ram = maquina.getmemoriasram()
-            elemento_memorias_ram = ComandoInformar.ElementoMemoriasRam()
-            datos_memorias = []
-            for i in range(0,len(memorias_ram)):
-                memoria_datos = ComandoInformar.DatosInformacionMemoriasRam()
-                memoria_datos.actualizar_datos(memorias_ram[i])
-                datos_memorias.append(memoria_datos)
-            elemento_memorias_ram.set_datos(datos_memorias)
-            informacion_informar.append(elemento_memorias_ram)
-        elif informacion_solicitada[i] == DISCOS_DUROS:
-            discos_duros = maquina.getdiscosduros()
-            elemento_discos_duros = ComandoInformar.ElementoDiscosDuros()
-            datos_discos = []
-            for i in range(0,len(discos_duros)):
-                disco_datos = ComandoInformar.DatosInformacionDiscosDuros()
-                disco_datos.actualizar_datos(discos_duros[i])
-                datos_discos.append(disco_datos)
-            elemento_discos_duros.set_datos(datos_discos)
-            informacion_informar.append(elemento_discos_duros)
-    return informacion_informar
-
-def generar_cmds_informar(informes):
-    cmds_informar = []
-    for informe in informes:
-        if informe.gettipo() == "inicio_sistema":
-            info_solicitada = informe.getinformacion()
-            cmd_informar = ComandoInformar()
-            cmd_informar.datos.set_id_informe(informe.getid())
-            informacion_informar = recolectar(info_solicitada);
-            cmd_informar.datos.set_informacion(informacion_informar)
-            cmds_informar.append(cmd_informar)
-    return cmds_informar
-
-if __name__ == "__main__":
-    import sys
-    from recoleccion.collector import Collector
-    from util.controladorarchivoconfiguracion import ControladorArchivoConfiguracion
-    from util.excepciones import *
-    from util.constantes import *
-    from conexion.cliente import Cliente
-    from conexion.comando import Comando
-    from conexion.comando_configurar import ComandoConfigurar
-    from conexion.comando_informar import ComandoInformar
-    from conexion.comando_inicio import ComandoInicio
-    from conexion.comando_maquina_nueva import ComandoMaquinaNueva
-    from conexion.comando_maquina_registrada import ComandoMaquinaRegistrada
-    from conexion.comando_reportar import ComandoReportar
-    from conexion.comando_solicitar import ComandoSolicitar
+import sys
+from util.controlador_archivo_configuracion import ControladorArchivoConfiguracion
+from util.constantes import *
+from conexion.cliente import Cliente
 
 try:
     cliente = None
     if (ControladorArchivoConfiguracion.existe_archivo()):
         archivo = ControladorArchivoConfiguracion.leer_archivo()
-        cliente = Cliente()
-        cliente.set_ip_servidor(archivo.getconfiguracion().getservidor().getip())
-        cliente.set_puerto(archivo.getconfiguracion().getservidor().getpuerto())            
-        cliente.conectar() #cliente inicia socket con servidor. DESCOMENTAR
+        ip_servidor = archivo.get_configuracion().get_servidor().get_ip()
+        puerto_servidor = archivo.get_configuracion().get_servidor().get_puerto()
+        cliente = Cliente(ip_servidor, puerto_servidor)
+        cliente.conectar()
         if (not archivo.posee_id()):
-            #enviar comando máquina nueva, recibir id, actualizar archivo
-            recolector = Collector()
-            maquina_nueva = recolector.get_maquina_nueva()
-            cmd_maquina_nueva = ComandoMaquinaNueva()
-            cmd_maquina_nueva.datos.actualizar_datos(maquina_nueva)
-            cliente.enviar_comando(cmd_maquina_nueva)
+            cliente.enviar_comando(cliente.generar_cmd_maquina_nueva())
             cmd_maquina_registrada = cliente.recibir_comando()
             id_maquina_registrada = cmd_maquina_registrada.get_datos().get_id()
-            archivo.setid(id_maquina_registrada)
+            archivo.set_id(id_maquina_registrada)
             ControladorArchivoConfiguracion.escribir_archivo(archivo)
-            cmd_inicio = ComandoInicio()
-            datos_cmd_inicio = ComandoInicio().Datos()
-            datos_cmd_inicio.set_id(archivo.getid())
-            cmd_inicio.set_datos(datos_cmd_inicio)
-            cliente.enviar_comando(cmd_inicio)
-            #print("INICIO")
-            #ya está en funcionamiento
+            cliente.enviar_comando(cliente.generar_cmd_inicio(archivo.get_id()))
         else:
-            #Ya tiene asignada IP y comienza a trabajar
-            cmd_inicio = ComandoInicio()
-            datos_cmd_inicio = ComandoInicio().Datos()
-            datos_cmd_inicio.set_id(archivo.getid())
-            cmd_inicio.set_datos(datos_cmd_inicio)
-            cliente.enviar_comando(cmd_inicio)
-            #enviar informes
+            cliente.enviar_comando(cliente.generar_cmd_inicio(archivo.get_id()))
             archivo = ControladorArchivoConfiguracion.leer_archivo()
-            cmds_informar = generar_cmds_informar(archivo.getconfiguracion().getinformes())
+            informes = archivo.get_configuracion().get_informes()
+            cmds_informar = cliente.generar_cmds_informar(informes)
             for cmd_informar in cmds_informar:
                 cliente.enviar_comando(cmd_informar)
-            #ya está en funcionamiento    
         while (True):
-            print("EN FUNCIONAMIENTO")
             cmd = cliente.recibir_comando()
-            if (type(cmd) is ComandoConfigurar):
-                #piso la configuracion actual, solo informes, del cliente.
+            if (cliente.es_comando_configurar(cmd)):
                 cmd_configurar = cmd
-                informes = cmd_configurar.get_datos().get_configuracion().getconfiguracion().getinformes()
-                archivo.getconfiguracion().setinformes(informes)
-                ControladorArchivoConfiguracion.escribir_archivo(archivo)
-                #print("RECIBO COMANDO CONFIGURAR, RECIBE CONFIGURACIÓN");
-                #enviar informes
+                informes = cmd_configurar.get_informes()
+                archivo.get_configuracion().set_informes(informes)
+                ControladorArchivoConfiguracion.escribir_archivo(archivo)                
                 archivo = ControladorArchivoConfiguracion.leer_archivo()
-                cmds_informar = generar_cmds_informar(archivo.getconfiguracion().getinformes())
+                informes_archivo = archivo.get_configuracion().get_informes()
+                cmds_informar = cliente.generar_cmds_informar(informes_archivo)
                 for cmd_informar in cmds_informar:
-                    cliente.enviar_comando(cmd_informar)
-            elif (type(cmd) is ComandoSolicitar):
-                #print("RECIBO COMANDO SOLICITAR, ENVÍO DE INFORME");
+                    cliente.enviar_comando(cmd_informar) #envío de informes
+            elif (cliente.es_comando_solicitar(cmd)):                
                 cmd_solicitar = cmd
-                cmd_informar = ComandoInformar()
-                cmd_informar.datos.set_id_solicitud(cmd_solicitar.get_datos().get_id_solicitud())
+                id_sol = cmd_solicitar.get_datos().get_id_solicitud()
                 info_solicitada = cmd_solicitar.get_datos().get_informacion()
-                informacion_informar = recolectar(info_solicitada);
-                cmd_informar.datos.set_informacion(informacion_informar)
+                cmd_informar = cliente.generar_cmd_informar(info_solicitada, id_solicitud = id_sol)
                 cliente.enviar_comando(cmd_informar)
+            elif(cmd is None):
+                print("Comando recibido no identificado => ", cmd)
     else:
-        #si o si debe existir el archivo con la direccion del servidor, sino no puede contectarse...termina
-        e = Excepcion("config.json: No existe archivo de configuración")
-        raise e
-except ExcepcionFileIO as e:
-    print(e._url + ': ' +e._mensaje )
-except PermissionError:
-    print("Necesita permisos de superusuario")
-except ExcepcionComando as e:
-    print(e._url + '--> ' +e._mensaje)
-except Excepcion as e:
-    print(e._mensaje)
-    print(e.imprimir_posibles_soluciones())
-    cliente = None
-    sys.exit(1)
-except RuntimeError:
-    print("Conexión con Servidor rota")
-    sys.exit(1)
+        #No se encuentra archivo, termina la ejecución
+        print("config.json: No existe archivo de configuración")
+        raise KeyboardInterrupt
 except KeyboardInterrupt:
-    print("\nCHAU")
-    sys.exit(1)
+    sys.exit(0)
 finally:
     if cliente is not None:
         cliente.desconectar()
+    print("\nHARDWARE COLLECTOR FINALIZADO")
+    sys.exit(0)

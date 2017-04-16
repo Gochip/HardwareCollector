@@ -6,22 +6,23 @@ class ArchivoConfiguracion:
         self.id = ""
         self.configuracion = None
 
-    def setid(self, id):
+    def set_id(self, id):
         self.id = id
 
-    def setconfiguracion(self, configuracion):
+    def set_configuracion(self, configuracion):
         self.configuracion = configuracion
     
-    def getid(self):
+    def get_id(self):
         return self.id
 
-    def getconfiguracion(self):
+    def get_configuracion(self):
         return self.configuracion
     
     def posee_id(self):
-        if len(self.id) > 0:
-            return True
-        return False
+        return (len(self.id) > 0)
+
+    def get_servidor_y_puerto(self):
+        return (self.configuracion.get_servidor().get_servidor_y_puerto())
 
 class Configuracion:
 
@@ -29,16 +30,16 @@ class Configuracion:
         self.informes = []
         self.servidor = None
 
-    def setinformes(self, informes):
+    def set_informes(self, informes):
         self.informes = informes
 
-    def setservidor(self, servidor):
+    def set_servidor(self, servidor):
         self.servidor = servidor
     
-    def getinformes(self):
+    def get_informes(self):
         return self.informes
 
-    def getservidor(self):
+    def get_servidor(self):
         return self.servidor
     
     def add_informe(self, informe):
@@ -51,17 +52,20 @@ class Servidor:
         self.ip = ip
         self.puerto = puerto
 
-    def setip(self, ip):
+    def set_ip(self, ip):
         self.ip = ip
     
-    def setpuerto(self, puerto):
+    def set_puerto(self, puerto):
         self.puerto = puerto
 
-    def getip(self):
+    def get_ip(self):
         return self.ip
     
-    def getpuerto(self):
+    def get_puerto(self):
         return self.puerto
+
+    def get_servidor_y_puerto(self):
+        return (self.ip, self.puerto)
 
 
 class Informe:
@@ -72,26 +76,26 @@ class Informe:
         self.tipo = tipo
         self.hora = hora
 
-    def setid(self, id):
+    def set_id(self, id):
         self.id = id
 
-    def setinformacion(self, informacion):
+    def set_informacion(self, informacion):
         self.informacion = informacion
 
-    def settipo(self, tipo):
+    def set_tipo(self, tipo):
         self.tipo = tipo
 
-    def sethora(self, hora):
+    def set_hora(self, hora):
         self.hora = hora
 
-    def getid(self):
+    def get_id(self):
         return self.id
 
-    def getinformacion(self):
+    def get_informacion(self):
         return self.informacion
 
-    def gettipo(self):
+    def get_tipo(self):
         return self.tipo
 
-    def gethora(self):
+    def get_hora(self):
         return self.hora

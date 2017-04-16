@@ -2,7 +2,7 @@
 #encoding: UTF-8
 import json as json
 import os.path as path
-from .archivoconfiguracion import *
+from .archivo_configuracion import *
 from util.excepciones import *
 
 class ControladorArchivoConfiguracion:
@@ -19,23 +19,22 @@ class ControladorArchivoConfiguracion:
     @classmethod
     def leer_archivo_como_texto(self):
         archivo = open(self.ruta_archivo_configuracion, "r")
-        return archivo.read()#.decode("UTF-8")
+        return archivo.read()
 
     @classmethod
     def escribir_archivo(self, archivo_configuracion):
-        servidor_str = json.dumps(archivo_configuracion.getconfiguracion().getservidor().__dict__)
-        informes = archivo_configuracion.getconfiguracion().getinformes()
+        servidor_str = json.dumps(archivo_configuracion.get_configuracion().get_servidor().__dict__)
+        informes = archivo_configuracion.get_configuracion().get_informes()
+        informes_str = "[]"    
         if type(informes) is list:
             informes_str = "["
-            for i in range(0,len(informes)):
+            for i in range(0, len(informes)):
                 informes_str += json.dumps(informes[i].__dict__)
-                if (i != (len(informes)-1)):
+                if (i != (len(informes) - 1)):
                     informes += ","
-            informes_str += "]"
-        else:
-            informes_str = "[]"    
-        str_archivo = '{"id":"'+str(archivo_configuracion.getid())+'",'
-        str_archivo += '"configuracion":{"servidor":'+servidor_str+',"informes":'+informes_str+'}}'
+            informes_str += "]"            
+        str_archivo = '{"id":"' + str(archivo_configuracion.get_id()) + '",'
+        str_archivo += '"configuracion":{"servidor":' + servidor_str + ',"informes":' + informes_str+ '}}'
         archivo = open(self.ruta_archivo_configuracion, "w")
         archivo.write(str_archivo)
 
@@ -55,9 +54,9 @@ class ControladorArchivoConfiguracion:
             e = Excepcion(msj)
             raise e            
         configuracion = Configuracion()
-        configuracion.setservidor(servidor)
+        configuracion.set_servidor(servidor)
         try:
-            archivo_configuracion.setid(datos['id'])
+            archivo_configuracion.set_id(datos['id'])
         except KeyError:
             pass
         try:
@@ -67,5 +66,5 @@ class ControladorArchivoConfiguracion:
                 configuracion.add_informe(informe_cliente)        
         except:
             pass
-        archivo_configuracion.setconfiguracion(configuracion)            
+        archivo_configuracion.set_configuracion(configuracion)
         return archivo_configuracion
