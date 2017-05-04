@@ -47,16 +47,20 @@ class Collector():
                             memoria = None
                             break;
                         elif(dato.startswith('Speed:')):
-                            memoria.setvelocidad(self.limpiar_string(dato.split(': ')[1]))
+                            velocidad = self.limpiar_string(dato.split(': ')[1]) #Mhz
+                            memoria.setvelocidad(self.limpiar_string(velocidad.split(' ')[0]))
                         elif(dato.startswith('Serial Number:')):
                             memoria.setnumeroserie(self.limpiar_string(dato.split(': ')[1]))
                         elif(dato.startswith('Data Width:')):
-                            memoria.settamaniobusdatos(self.limpiar_string(dato.split(': ')[1]))
+                            tamanio = self.limpiar_string(dato.split(': ')[1]) #bits
+                            memoria.settamaniobusdatos(self.limpiar_string(tamanio.split(' ')[0]))
                         elif(dato.startswith('Size: No Module Installed')):
                             memoria = None
                             break;
                         elif(dato.startswith('Size:')):
-                            memoria.settamanio(self.limpiar_string(dato.split(': ')[1]))
+                            tamanio_mb = float(self.limpiar_string(self.limpiar_string(dato.split(': ')[1]).split(' ')[0])) #MB
+                            tamanio_bytes = (tamanio_mb * 1024) * 1024
+                            memoria.settamanio(str(tamanio_bytes))
                         elif(dato.startswith('Form Factor:')):
                             memoria.settecnologia(self.limpiar_string(dato.split(': ')[1]))
                     if memoria is not None:
@@ -72,7 +76,7 @@ class Collector():
         discos_duro = []
         posibles_discos = [] #[nombre, tipo, tamanio, particiones]
 
-        lsblk_salida = (subprocess.check_output(['lsblk', '-o', 'KNAME,TYPE,SIZE']).decode('UTF-8').split('\n'))
+        lsblk_salida = (subprocess.check_output(['lsblk', '--bytes','-o', 'KNAME,TYPE,SIZE']).decode('UTF-8').split('\n'))
 
         for disco_o_part in lsblk_salida:
             if disco_o_part != '' and disco_o_part != 'KNAME TYPE':
