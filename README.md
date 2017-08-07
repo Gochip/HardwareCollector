@@ -5,7 +5,7 @@ El HardwareCollector permite la recolección de datos de computadoras de un labo
 
 Se une con el proyecto ISAAI para mantener un histórico de los cambios en el hardware y software.
 
-https://github.com/dsbarrionuevo/isaai
+https://github.com/LabSis/isaai
 
 ## Servidor de  Hardware Collector ##
 
